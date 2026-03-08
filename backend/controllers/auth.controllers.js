@@ -1,3 +1,4 @@
+import genToken from "../config/token.js"
 import User from "../models/user.model.js"
 import bcrypt from "bcryptjs"
 export const SignUp = async (req,res)=>{
@@ -19,11 +20,59 @@ export const SignUp = async (req,res)=>{
             email,
             password: hashPassword
         })
-        await user.save()
-        res.status(201).json({message:"User created successfully"})
+         const token = await genToken(user._id)
+         res.cookie("token",token,{
+            httpOnly:true,
+            maxAge:10*24*60*60*1000,
+            sameSite:false,
 
+         })
+        return res.status(201).json(user)
     }catch(error){
         console.log(error)
-        res.status(500).json({message:"Internal server error"})
+      return res.status(500).json({message:`SignUp error ${error.message}`})
+    }       
+}
+
+
+
+
+export const Login = async (req,res)=>{
+    try{ 
+        const {email,password} = req.body
+        if(!email || !password){
+            return res.status(400).json({message:"Please fill all the fields"})
+        }
+        const user = await User.findOne({email})
+        if(!user){
+            return res.status(400).json({message:"Email does not exist"})
+        }
+       
+        const isMatch = await bcrypt.compare(password,user.password)
+        if (!isMatch){
+            return res.status(400).json({message:"Incorrect password"})
+        }
+         const token = await genToken(user._id)
+         res.cookie("token",token,{
+            httpOnly:true,
+            maxAge:10*24*60*60*1000,
+            sameSite:false,
+         })
+
+        return res.status(200).json(user)
+    }catch(error){
+        console.log(error)
+       return res.status(500).json({message:`Login error ${error.message}`})
+    }       
+}
+
+
+export const Logout = async (req,res)=>{
+    try {
+        res.clearCookie("token")
+        return res.status(200).json({message:"Logout successful"})  
+        
+    } catch (error) {
+         return res.status(500).json({message:`Logout error ${error.message}`})
     }       
 }
