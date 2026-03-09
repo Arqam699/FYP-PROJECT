@@ -12,9 +12,12 @@ app.use(express.json())
 
 app.use(cookieParser())
 
+
 app.use("/api/auth",authRouter)
+
+connectdb();
 
   app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
-      connectdb();
+
 });
