@@ -7,7 +7,7 @@ import connectdb from './config/db.js';
 dotenv.config();
 const app = express();
 
-  const port = 8000;
+  const port = process.env.PORT
 
 app.use(express.json())
 
@@ -16,9 +16,8 @@ app.use(cookieParser())
 app.use("/api/auth",authRouter)
 
 app.get('/', (req, res) => {
-  res.send('Hello, World!');
+  res.send('Hello Pakistan!');
 });
-
 
   app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
