@@ -1,21 +1,18 @@
+import React from "react";
+import { Route, Routes } from "react-router-dom";
+import SignUp from "./pages/SignUp";
+import SignIn from "./pages/SignIn";
+
+
 function App() {
   return (
-    <div className="container mt-5">
-      
-      <h1 className="text-primary text-center">
-        Bootstrap Test 🚀
-      </h1>
-
-      <div className="card mt-4 p-5 shadow">
-        <h3 className="text-success">If you see this styled card:</h3>
-        <p>✔ Bootstrap is working correctly</p>
-
-        <button className="btn btn-danger mt-5">
-          Test Button
-        </button>
-      </div>
+    <div>
+     <Routes>
+      <Route path='/signup' element={<SignUp/>}/>
+      <Route path='/signin' element={<SignIn/>}/>
+     </Routes>
     </div>
   );
 }
 
-export default App;
+export default App; 
