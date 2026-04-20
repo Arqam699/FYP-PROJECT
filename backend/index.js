@@ -1,11 +1,17 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+dotenv.config();
 import authRouter from './routes/user.routes.js';
 import cookieParser from 'cookie-parser';
 import connectdb from './config/db.js';
 dotenv.config();
+import cors from 'cors';
 const app = express();
+app.use(cors({
+  origin:"http://localhost:5173",
+  credentials:true
+}))
 
   const port = process.env.PORT
 
