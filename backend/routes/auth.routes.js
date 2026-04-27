@@ -1,8 +1,7 @@
-
+// auth.routes.js file name is this
 import express from "express";
 
-import { Login, Logout, SignUp } from "../controllers/auth.controllers.js";
-
+import { Login, Logout, SignUp } from "../controllers/auth.controllers.js"
 const authRouter = express.Router();
 
 authRouter.post("/signup",SignUp)
