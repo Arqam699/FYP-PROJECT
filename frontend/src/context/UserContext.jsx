@@ -1,10 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 export const userDataContext = React.createContext();
 function UserContext({ children }) {
   const serverUrl = "http://localhost:8000";
   const [userData, setUserData] = React.useState(null);
+      const [frontendImage, setFrontendImage] = useState(null);
+      const [backendImage, setBackendImage] = useState(null);
+      const [selectedImage, setSelectedImage] = useState(null);
 
   
 
@@ -16,15 +19,15 @@ function UserContext({ children }) {
       setUserData(result.data);
       console.log(result.data);
     } catch (error) {
-      console.log(error);
+      // User not logged in or token invalid - this is expected for unauthenticated users
+      setUserData(null);
     }
-
   };
   useEffect(() => {
     handleCurrentUser();
   }, []);
   const value = {
-    serverUrl,userData, setUserData
+    serverUrl,userData, setUserData,backendImage,setBackendImage,frontendImage,setFrontendImage,selectedImage,setSelectedImage
   };
 
   return (

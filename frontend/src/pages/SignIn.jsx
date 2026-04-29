@@ -30,7 +30,7 @@ const [err,setErr] = React.useState("")
       let result =await axios.post(`${serverUrl}/api/auth/login`,{email,password},{withCredentials:true})
       setUserData(result.data)
       setLoading(false)
-        navigate("/")
+      navigate("/")
     } catch (error) {
       console.log(error)
       setUserData(null)
