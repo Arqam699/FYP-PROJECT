@@ -12,6 +12,7 @@ function UserContext({ children }) {
   
 
   const handleCurrentUser = async () => {
+    
     try {
       const result = await axios.get(`${serverUrl}/api/user/current`, {
         withCredentials: true,
