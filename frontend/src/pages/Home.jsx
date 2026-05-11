@@ -9,8 +9,8 @@ function Home(){
     const handleLogout = async() => {
         try {
             const rexult = await axios.get(`${serverUrl}/api/auth/logout`,{withCredentials:true})
+            navigate("/signin");
             setUserData(null);
-            navigate("/signin")
         } catch (error) {
             setUserData(null);
             console.log(error);
@@ -21,7 +21,7 @@ function Home(){
 
     return (
         <div className="w-full h-[100vh] bg-gradient-to-t from-[black] to-[#0d0da3] flex flex-col justify-center items-center gap-2 " >
-        <button className="w-30 h-10 bg-blue-400 text-white rounded-full text-[16px] font-bold hover:bg-blue-600 transition duration-300 cursor-pointer mt-3 absolute right-[40px] top-[30px]" onClick={handleLogout}>LogOut</button>
+        <button className="w-30 h-10 bg-blue-400 text-white rounded-full text-[16px] font-bold hover:bg-blue-600 transition duration-300 cursor-pointer mt-3 absolute right-[40px] top-[30px]"  onClick={handleLogout}>LogOut</button>
            
          <button className="w-52 h-10 bg-blue-400 text-white rounded-full text-[16px] font-bold hover:bg-blue-600 transition duration-300 cursor-pointer mt-3 absolute top-[85px] right-[40px]" onClick={()=>navigate("/customize")}>Customize Your Assistant</button>
 

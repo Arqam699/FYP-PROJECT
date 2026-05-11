@@ -43,14 +43,14 @@ const [err,setErr] = React.useState("")
   return (
     <div className='w-full h-[100vh] bg-cover flex items-center justify-center' style={{backgroundImage:`url(${image2})`}}>
       <form className='w-[80%] h-120 max-w-[450px] bg-[#0000002f] backdrop-blur
-      shadow-lg drop-shadow-blue-950 flex justify-center items-center flex-col gap-4 'onSubmit={handleSignin}>
-      <h1 className="text-blue-200 text-[30px] font-bold m-7" >Register to <span className="text-blue-300">Virual</span> <span className="text-blue-400">Assistant</span> </h1>
-     <input type="text" placeholder="Enter your Name" className="w-90 h-12 outline-none border-2 px-7 py-5 border-white bg-transparent placeholder:text-cyan-100 rounded-full text-[16px] text-blue-100" required onChange={(e)=>setName(e.target.value )} value={name} /> 
+      shadow-lg drop-shadow-blue-950 flex justify-center items-center flex-col gap-4 pt-4'onSubmit={handleSignin}>
+      <h1 className="text-blue-200 text-[30px] font-bold m-8" >Register to <span className="text-blue-300">Virual</span> <span className="text-blue-400">Assistant</span> </h1>
+     <input type="text" placeholder="Enter your Name" className="w-85 h-12 outline-none border-2 px-7 py-5 border-white bg-transparent placeholder:text-white rounded-full text-[16px] text-blue-100" required onChange={(e)=>setName(e.target.value )} value={name} /> 
 
-     <input type="text" placeholder="Enter your Email" className="w-90 h-12 outline-none border-2 px-7 py-5 my-3 border-white placeholder:text-cyan-100 rounded-full text-[16px] text-blue-100" required onChange={(e)=>setEmail(e.target.value )} value={email} />
+     <input type="text" placeholder="Enter your Email" className="w-85 h-12 outline-none border-2 px-7 py-5 my-3 border-white placeholder:text-white rounded-full text-[16px] text-blue-100" required onChange={(e)=>setEmail(e.target.value )} value={email} />
     
     <div className="relative">
-  <input type={showPassword ? "text" : "password"} placeholder="Enter password" className="w-90 h-12 rounded-full text-blue-100 border-2 outline-none placeholder:text-cyan-100 px-7 pr-12 py-5" required onChange={(e)=>setPassword(e.target.value )} value={password} />
+  <input type={showPassword ? "text" : "password"} placeholder="Enter password" className="w-85 h-12 rounded-full text-blue-100 border-2 outline-none placeholder:text-white px-7 pr-12 py-5" required onChange={(e)=>setPassword(e.target.value )} value={password} />
   {showPassword?(
   < IoMdEyeOff className="absolute top-3 right-5 w-6 h-6 cursor-pointer text-blue-200" onClick={togglePasswordVisibility  } />
     ):(
@@ -58,12 +58,12 @@ const [err,setErr] = React.useState("")
     )}
 </div>
 {err && err.length>0 && <p className="text-red-500 text-3">{err}</p>}
-       <button className="w-40 h-10 bg-blue-400 text-white rounded-full text-[16px] font-bold
-       hover:bg-blue-600 transition duration-300  cursor-pointer mt-3" disabled={loading}>
-         {loading ? "Creating Account..." : "Sign Up"}
+       <button className="w-30 h-10  bg-blue-400 text-black rounded-full text-[18px] font-bold
+       hover:bg-blue-600 hover:text-white transition duration-300  cursor-pointer mt-3" disabled={loading}>
+         {loading ? "Creating" : "Sign Up"}
        </button>
 
-        <p className="text-white text-[15px] my-2 "  onClick={()=>{navigate("/signin")}}>Already have an account ? <button className="text-blue-400 font-bold cursor-pointer hover:underline">Sign In</button></p>
+        <p className="text-white font-medium text-[17px] my-2 "  onClick={()=>{navigate("/signin")}}>Already have an account ? <button className="text-blue-400 font-bold cursor-pointer hover:underline">Sign In</button></p>
       </form>
     </div>
   );
