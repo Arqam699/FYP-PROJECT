@@ -2,12 +2,12 @@ import React from "react";
 import { FaEye } from "react-icons/fa";
 import { IoMdEyeOff } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import image1 from '../assets/pics/image1.png';
-import image2 from '../assets/pics/image2.jpg';
-import image3 from '../assets/pics/image3.jpg';
-import image4 from '../assets/pics/image4.jpg';
-import image5 from '../assets/pics/image5.png';
-import { userDataContext } from "../context/UserContext.jsx";
+import image1 from '../assets/image1.png';
+import image2 from '../assets/image2.jpg';
+import image3 from '../assets/image3.jpg';
+import image4 from '../assets/image4.jpg';
+import image5 from '../assets/image5.png';
+import { userDataContext } from "../Context/UserContext.jsx";
 import axios from "axios";
 function login() {
   const navigate = useNavigate();

@@ -4,6 +4,5 @@ import { resolve } from 'path'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-  root: resolve(__dirname, 'src'),
   plugins: [react(), tailwindcss()],
 })
