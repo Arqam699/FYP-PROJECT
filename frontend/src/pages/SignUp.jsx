@@ -45,12 +45,12 @@ const [err,setErr] = React.useState("")
       <form className='w-[80%] h-120 max-w-[450px] bg-[#0000002f] backdrop-blur
       shadow-lg drop-shadow-blue-950 flex justify-center items-center flex-col gap-4 pt-4'onSubmit={handleSignin}>
       <h1 className="text-blue-200  text-[30px] font-bold m-8" >Register to <span className="text-blue-300">Virual</span> <span className="text-blue-400">Assistant</span> </h1>
-     <input type="text" placeholder="Enter your Name" className="w-85 h-12 outline-none border-2 px-7 py-5 border-white bg-transparent placeholder:text-white rounded-full text-[16px] text-blue-100" required onChange={(e)=>setName(e.target.value )} value={name} /> 
+     <input type="text" autoFocus placeholder="Enter your Name" className="w-85 h-12 outline-none border-2 px-7 py-5 border-white bg-transparent  placeholder:text-white rounded-full text-[16px] text-blue-100 transition-all duration-300 hover:shadow-[0_0_10px_rgba(96,165,250,0.6)] focus:shadow-[0_0_15px_rgba(59,130,246,0.8)]" required onChange={(e)=>setName(e.target.value )} value={name} />
 
-     <input type="text" placeholder="Enter your Email" className="w-85 h-12 outline-none border-2 px-7 py-5 my-3 border-white placeholder:text-white rounded-full text-[16px] text-blue-100" required onChange={(e)=>setEmail(e.target.value )} value={email} />
+     <input type="text" placeholder="Enter your Email" className="w-85 h-12 outline-none border-2 px-7 py-5 my-3  border-white placeholder:text-white rounded-full text-[16px] text-blue-100 transition-all duration-300 hover:shadow-[0_0_10px_rgba(96,165,250,0.6)] focus:shadow-[0_0_15px_rgba(59,130,246,0.8)]" required onChange={(e)=>setEmail(e.target.value )} value={email} />
     
     <div className="relative">
-  <input type={showPassword ? "text" : "password"} placeholder="Enter password" className="w-85 h-12 rounded-full text-blue-100 border-2 outline-none placeholder:text-white px-7 pr-12 py-5" required onChange={(e)=>setPassword(e.target.value )} value={password} />
+  <input type={showPassword ? "text" : "password"} placeholder="Enter password" className="w-85 h-12 rounded-full   text-blue-100 border-2 outline-none placeholder:text-white px-7 pr-12 py-5 transition-all duration-300 hover:shadow-[0_0_10px_rgba(96,165,250,0.6)] focus:shadow-[0_0_15px_rgba(59,130,246,0.8)]" required onChange={(e)=>setPassword(e.target.value )} value={password} />
   {showPassword?(
   < IoMdEyeOff className="absolute top-3 right-5 w-6 h-6 cursor-pointer text-blue-200" onClick={togglePasswordVisibility  } />
     ):(
@@ -59,7 +59,7 @@ const [err,setErr] = React.useState("")
 </div>
 {err && err.length>0 && <p className="text-red-500 text-3">{err}</p>}
        <button className="w-30 h-10 tracking-wide  bg-blue-400 text-black rounded-full text-[18px] font-bold
-       hover:bg-blue-600 hover:text-white transition duration-300  cursor-pointer mt-3" disabled={loading}>
+       hover:bg-blue-500 hover:text-white transition-all duration-300  cursor-pointer mt-3 hover:shadow-[0_0_15px_rgba(59,130,246,0.6)] active:scale-95" disabled={loading}>
          {loading ? "Creating" : "Sign Up"}
        </button>
 

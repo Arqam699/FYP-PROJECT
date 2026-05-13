@@ -48,7 +48,7 @@ function Customize(){
         </div>
         <input type="file" accept="image/*" ref={inputImage} hidden onChange={handleImage} />
             </div>
-        {selectedImage  && <button className="w-30 h-16 bg-blue-400 font-bold text-black rounded-full text-[20px] font-bold hover:bg-blue-600 hover:text-white transition duration-300 cursor-pointer my-5 "   onClick={() => {navigate("/customize2")}}>
+        {selectedImage  && <button className="w-30 h-16 bg-blue-400 font-bold text-black rounded-full text-[20px] transition-all duration-300  active:scale-95  hover:shadow-[0_0_15px_rgba(59,130,246,0.6)] font-bold hover:bg-blue-600 hover:text-white cursor-pointer my-5 "   onClick={() => {navigate("/customize2")}}>
             Next
           </button>}
         </div>
