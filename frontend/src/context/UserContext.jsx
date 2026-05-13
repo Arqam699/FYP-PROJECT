@@ -5,6 +5,7 @@ export const userDataContext = React.createContext();
 function UserContext({ children }) {
   const serverUrl = "http://localhost:8000";
   const [userData, setUserData] = React.useState(null);
+  const [loading, setLoading] = useState(true);
       const [frontendImage, setFrontendImage] = useState(null);
       const [backendImage, setBackendImage] = useState(null);
       const [selectedImage, setSelectedImage] = useState(null);
@@ -12,7 +13,7 @@ function UserContext({ children }) {
   
 
   const handleCurrentUser = async () => {
-    
+
     try {
       const result = await axios.get(`${serverUrl}/api/user/current`, {
         withCredentials: true,
@@ -23,7 +24,9 @@ function UserContext({ children }) {
       // User not logged in or token invalid - this is expected for unauthenticated users
       setUserData(null);
     }
+      setLoading(false);
   };
+
   useEffect(() => {
     handleCurrentUser();
   }, []);

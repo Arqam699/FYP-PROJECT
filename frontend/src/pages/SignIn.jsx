@@ -59,7 +59,7 @@ const [err,setErr] = React.useState("")
          {loading ? "Signing In..." : "Sign In"}
          </button>
 
-        <p className="text-white font-medium text-[16px] my-2"onClick={() => navigate("/signup")} >Want to Create new account ? <button className="text-blue-400 font-bold cursor-pointer hover:underline">Sign Up</button></p>
+        <p className="text-white font-medium tracking-wide text-[16px] my-2"onClick={() => navigate("/signup")} >Want to Create new account ? <button className="text-blue-400 font-bold cursor-pointer hover:underline">Sign Up</button></p>
       </form>
     </div>
   );

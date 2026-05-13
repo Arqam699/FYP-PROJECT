@@ -48,7 +48,7 @@ function Customize2(){
             <input type="text" placeholder="Enter Assistant Name" className="w-90 h-10 text-white outline-none border-2 px-5 py-7 mb-4 border-white placeholder:text-cyan-100 rounded-full text-[15px]" onChange={(e)=> setAssistantName(e.target.value)} value={assistantName} />
 
          {assistantName &&    <button className="w-52 h-13 bg-blue-400 font-semibold text-black rounded-full text-[19px]  hover:bg-blue-600 hover:text-white transition duration-300 cursor-pointer" disabled={loading} onClick={()=> handleUpdateAssistant()}>
-            {!loading ? "Create your Assistant" : "Loading..."}</button>}
+            {!loading ? "Create your Assistant" : "Creating Assistant..."}</button>}
         </div>
       )
 }
