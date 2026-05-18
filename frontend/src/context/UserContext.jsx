@@ -10,7 +10,8 @@ function UserContext({ children }) {
       const [backendImage, setBackendImage] = useState(null);
       const [selectedImage, setSelectedImage] = useState(null);
 
-  
+
+
 
   const handleCurrentUser = async () => {
 
@@ -26,12 +27,24 @@ function UserContext({ children }) {
     }
       setLoading(false);
   };
+     const getGeminiResponse = async (command) => {
+  try {
+    const result= await axios.post(`${serverUrl}/api/user/askToAssistant`,{command},{withCredentials:true})
+  return result.data
+  console.log(command);
+  } catch (error) {
+    console.log(error);
+
+  }
+
+
+     }
 
   useEffect(() => {
     handleCurrentUser();
   }, []);
   const value = {
-    serverUrl,userData, setUserData,backendImage,setBackendImage,frontendImage,setFrontendImage,selectedImage,setSelectedImage
+    serverUrl,userData, setUserData,backendImage,setBackendImage,frontendImage,setFrontendImage,selectedImage,setSelectedImage,getGeminiResponse
   };
 
   return (

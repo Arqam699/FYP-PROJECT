@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { userDataContext } from "../Context/UserContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Home(){
-    const { userData,serverUrl,setUserData } = React.useContext(userDataContext);
+    const { userData,serverUrl,setUserData,getGeminiResponse } = React.useContext(userDataContext);
      const navigate = useNavigate();
     const handleLogout = async() => {
         try {
@@ -17,6 +17,36 @@ function Home(){
 
         }
     }
+
+
+
+   useEffect(() => {
+
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const recognition = new SpeechRecognition();
+
+    recognition.continuous = true;
+    recognition.lang = 'en-US';
+
+    recognition.onresult =async (e) => {
+        const transcript =e.results[e.results.length -1][0].transcript.trim()
+        console.log("heard : "+ transcript );
+        if(transcript.toLowerCase().includes(userData.assistantname.toLowerCase())){
+         const data = await getGeminiResponse(transcript)
+         console.log(data);
+         
+        }
+        
+    }
+
+    recognition.start();
+
+}, []);
+
+
+
 
 
     return (
