@@ -1,46 +1,67 @@
 
 import axios from 'axios'
 
-const geminiResponse = async (command,assistantname,userName) => {
+const geminiResponse = async (command,assistantName,userName) => {
     
   try {
 
     const apiKey = process.env.GEMINI_API_KEY;
-   const propt = {
-  "prompt": `You are a virtual assistant named  ${assistantName} created by ${userName}.
-   You are not Google.You will now behave like a smart voice-enabled assistant similar to Siri, 
-   Google Assistant, or Jarvis.\n\nYour task is to understand the user's natural language input and always
-    respond ONLY in valid JSON format.
-    \n\nResponse format:\n
-    
-    {\n  \"type\": \"general\" | \"google_search\" | \"youtube_search\"
-     | \"youtube_play\" | \"get_time\" | \"get_date\" | \"get_day\" | \"get_month\" | \"calculator_open\"
-      | \"instagram_open\" | \"facebook_open\" | \"weather_show\" | \"open_app\" | \"close_app\" | 
-      \"play_music\" | \"code_generate\",\n\n  
+   const prompt = `
+You are a virtual assistant named ${assistantName} created by ${userName}.
 
-      \"userInput\": \"original user command without
-       assistant name\",\n\n  \"searchQuery\": \"only include searchable text if user asked to 
-       search something\",\n\n  \"response\": \"short voice-friendly response for speaking 
-       to the user\",\n\n  \"status\": \"success\" | \"error\"\n}\n\n
-       
-       Rules:\n1.Only respond if the command starts with the assistant name.\n2. Remove assistant name from userInput.\n3. 
-       If user says 'Jarvis search cats on Google', then searchQuery should only contain 'cats'.\n4. 
-       If user says 'Jarvis play Arijit Singh songs on YouTube', then searchQuery should only contain 
-       'Arijit Singh songs'.\n5. Always return pure JSON.\n6. Never return markdown or explanations.\n7. 
-       Keep responses short and natural.\n8. If command is unclear return an error JSON.\n9. Detect user
-        intent intelligently.\n10. For normal conversation use type='general'.`
+You are not Google. You will now behave like a smart voice-enabled assistant similar to Siri, Google Assistant, or Jarvis.
+
+Your task is to understand the user's natural language input and respond ONLY in valid JSON format like this:
+
+{
+  "type": "general" | "google_search" | "youtube_search" | "youtube_play" | "get_time" | "get_date" | "get_day" | "get_month" | "calculator_open" | "instagram_open" | "facebook_open" | "weather_show",
+
+  "userInput": "<original user input>",{}
+
+  "response": "<short spoken response for the user>"
 }
-    const apiUrl =
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  now your userInput- ${command}
+  Important:
+  - only response with the JSON object,nothing else
+- Do not return markdown or extra text.
+- Remove the assistant name from userInput if it exists.
+- If the user wants to search something on Google or YouTube, userInput should contain ONLY the search query.
+- Keep the response short and natural like a real voice assistant.
+- Detect the correct type based on the user's intent.
+
+Examples:
+
+User: "Open YouTube"
+Response:
+{
+  "type": "youtube_search",
+  "userInput": "",
+  "response": "Opening YouTube"
+}
+
+User: "Search cats videos on YouTube"
+Response:
+{
+  "type": "youtube_search",
+  "userInput": "cats videos",
+  "response": "Searching cats videos on YouTube"
+}
+
+
+User: "Open Instagram"
+Response:
+{
+  "type": "instagram_open",
+  "userInput": "",
+  "response": "Opening Instagram"
+}
+`;
+     
+   const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
     const result = await axios.post(apiUrl, {
-      contents: [
-        {
-          parts: [
-            {
-              text: prompt
-            }
-          ]
-        }
+     "contents": [{
+          "parts": [{"text": prompt} ]
+         }
       ]
     });
 

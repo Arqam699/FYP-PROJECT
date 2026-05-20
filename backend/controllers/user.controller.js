@@ -1,5 +1,6 @@
 import { response } from "express";
 import uploadClaudinary from "../config/claudinary.js";
+import geminiResponse from "../gemini.js";
 import User from "../models/user.model.js";    
 import moment from "moment";
  export const currentUser = async (req,res)=>{
@@ -43,7 +44,7 @@ export const updateAssistant = async (req,res)=>{
 }
 
 export const askToAssistant = async (req,res)=>{
-  try {
+  try { 
     const {command} = req.body;
     const user= await User.findById(req.userId);
     const userName = user.name;
@@ -58,36 +59,36 @@ export const askToAssistant = async (req,res)=>{
     const gemResult = JSON.parse(jsonMatch[0])
     const type= gemResult.type
     switch(type){
-        case "get_date": 
+        case 'get_date': 
         return res.json({
             type,
             userInput: gemResult.userInput, 
-            response: `today is ${moment().format("YYYY-MM-DD")}`
+            response: `today is ${moment().format("MMMM Do YYYY")}`
         });
-        case "get_time":
+        case 'get_time':
         return res.json({
             type,
             userInput: gemResult.userInput, 
-            response: `current time is ${moment().format("HH:mm:ss")}`
+            response: `current time is ${moment().format("hh:mm:ss A")}`
         });
-        case "get_day":
+        case 'get_day':
         return res.json({
             type,
             userInput: gemResult.userInput, 
             response: `today is ${moment().format("dddd")}`
         });
-        case "youtube_search":
-        case "weather_show":
-        case "general":
-        case "google_search":
-        case "youtube_play":
-        case "calculator_open":
-        case "instagram_open":
-        case "facebook_open":
+        case 'youtube_search':
+        case 'weather_show':
+        case 'general':
+        case 'google_search':
+        case 'youtube_play':
+        case 'calculator_open':
+        case 'instagram_open':
+        case 'facebook_open':
             return res.json({
                 type,
                 userInput: gemResult.userInput, 
-                response: gemResult.response
+                response: gemResult.response,
             });
             default:
                 return res.json({

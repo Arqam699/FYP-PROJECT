@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { userDataContext } from "../Context/UserContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+ import { useRef } from "react";
 
 function Home(){
     const { userData,serverUrl,setUserData,getGeminiResponse } = React.useContext(userDataContext);
@@ -20,33 +21,98 @@ function Home(){
 
 
 
-   useEffect(() => {
+
+useEffect(() => {
 
     const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
+        window.SpeechRecognition || window.webkitSpeechRecognition;
 
     const recognition = new SpeechRecognition();
 
     recognition.continuous = true;
-    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.lang = "en-US";
 
-    recognition.onresult =async (e) => {
-        const transcript =e.results[e.results.length -1][0].transcript.trim()
-        console.log("heard : "+ transcript );
-        if(transcript.toLowerCase().includes(userData.assistantname.toLowerCase())){
-         const data = await getGeminiResponse(transcript)
-         console.log(data);
-         
+    let isProcessing = false;
+
+    const assistantName = userData.assistantname.toLowerCase();
+
+    const startListening = () => {
+        try {
+            recognition.start();
+        } catch (e) {
+            console.log("Recognition already started");
         }
-        
-    }
+    };
 
-    recognition.start();
+    const stopListening = () => {
+        try {
+            recognition.stop();
+        } catch (e) {}
+    };
+
+    recognition.onresult = async (e) => {
+
+        if (isProcessing) return;
+
+        const transcript =
+            e.results[e.results.length - 1][0].transcript.trim().toLowerCase();
+
+        console.log("heard:", transcript);
+
+        // wake word check
+        if (!transcript.includes(assistantName)) return;
+
+        isProcessing = true;
+
+        stopListening();
+
+        // extract command safely
+        const command = transcript.split(assistantName)[1]?.trim();
+
+        if (!command) {
+            console.log("No command detected");
+            isProcessing = false;
+            startListening();
+            return;
+        }
+
+        try {
+
+            console.log("processing command:", command);
+
+            const data = await getGeminiResponse(command);
+
+            console.log("response:", data);
+
+        } catch (err) {
+            console.log("API error:", err);
+        }
+
+        // cooldown BEFORE restarting (important for RPM control)
+        setTimeout(() => {
+            isProcessing = false;
+            startListening();
+        }, 2000);
+    };
+
+    recognition.onerror = (e) => {
+        console.log("Speech error:", e);
+        isProcessing = false;
+        startListening();
+    };
+
+    recognition.onend = () => {
+        if (!isProcessing) {
+            startListening();
+        }
+    };
+
+    startListening();
+
+    return () => stopListening();
 
 }, []);
-
-
-
 
 
     return (
