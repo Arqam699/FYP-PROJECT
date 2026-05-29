@@ -24,6 +24,7 @@ app.use(cookieParser())
 app.use("/api/auth",authRouter)
 app.use("/api/user",userRouter)
 
+
 app.get("/",async (req,res)=>{
   let prompt = req.query.prompt
   let data = await geminiResponse(prompt)

@@ -47,7 +47,7 @@ function Customize2(){
             
             <input type="text" autoFocus placeholder="Enter Assistant Name" className="w-90 h-10 text-white outline-none border-2 px-5  py-7 mb-4 border-white placeholder:text-white rounded-full text-[15px] transition-all duration-300 hover:shadow-[0_0_10px_rgba(96,165,250,0.6)] focus:shadow-[0_0_15px_rgba(59,130,246,0.8)]" onChange={(e)=> setAssistantName(e.target.value)} value={assistantName} />
 
-         {assistantName &&    <button className="w-52 h-13 bg-blue-400 font-semibold text-black rounded-full text-[19px]  hover:bg-blue-600 hover:text-white transition-all duration-300 cursor-pointer hover:shadow-[0_0_15px_rgba(59,130,246,0.6)] active:scale-95" disabled={loading} onClick={()=> handleUpdateAssistant()}>
+         {assistantName &&    <button className="w-50 h-13 bg-blue-500/20 backdrop-blur-md border border-blue-400/30 text-white rounded-2xl text-[18px] font-semibold hover:bg-blue-500 hover:scale-105 transition-all duration-300 shadow-lg cursor-pointer" disabled={loading} onClick={()=> handleUpdateAssistant()}>
             {!loading ? "Create your Assistant" : "Please Wait..."}</button>}
         </div>
       )

@@ -58,8 +58,7 @@ const [err,setErr] = React.useState("")
     )}
 </div>
 {err && err.length>0 && <p className="text-red-500 text-3">{err}</p>}
-       <button className="w-30 h-10 tracking-wide  bg-blue-400 text-black rounded-full text-[18px] font-bold
-       hover:bg-blue-500 hover:text-white transition-all duration-300  cursor-pointer mt-3 hover:shadow-[0_0_15px_rgba(59,130,246,0.6)] active:scale-95" disabled={loading}>
+       <button className="w-30 h-10 tracking-wide  bg-blue-600/30 backdrop-blur-md border border-blue-400/30 text-white rounded-2xl text-[16px] font-semibold hover:bg-blue-500 hover:scale-105 transition-all duration-300 shadow-lg cursor-pointer" disabled={loading}>
          {loading ? "Creating" : "Sign Up"}
        </button>
 

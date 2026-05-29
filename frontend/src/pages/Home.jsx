@@ -1,134 +1,1000 @@
-import React, { useEffect } from "react";
+import React, {
+    useEffect,
+    useRef,
+    useState
+} from "react";
+
 import { userDataContext } from "../Context/UserContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
- import { useRef } from "react";
 
-function Home(){
-    const { userData,serverUrl,setUserData,getGeminiResponse } = React.useContext(userDataContext);
-     const navigate = useNavigate();
-    const handleLogout = async() => {
+function Home() {
+
+    const {
+        userData,
+        serverUrl,
+        setUserData,
+        getGeminiResponse
+    } = React.useContext(userDataContext);
+
+    const navigate = useNavigate();
+
+    // =========================
+    // STATES
+    // =========================
+
+    const [messages, setMessages] =
+        useState([]);
+
+        const [assistantStatus, setAssistantStatus] =
+    useState("listening");
+
+    // =========================
+    // REFS
+    // =========================
+
+    const recognitionRef = useRef(null);
+
+    const isSpeakingRef =
+        useRef(false);
+
+    const isRecognitionRunningRef =
+        useRef(false);
+
+    const autoRestartRef =
+        useRef(null);
+
+    const isManuallyStoppedRef =
+        useRef(false);
+
+    const chatEndRef =
+        useRef(null);
+
+    // =========================
+    // AUTO SCROLL
+    // =========================
+
+    useEffect(() => {
+
+        if (chatEndRef.current) {
+
+            chatEndRef.current.scrollIntoView({
+                behavior: "smooth"
+            });
+        }
+
+    }, [messages]);
+
+    // =========================
+    // LOGOUT
+    // =========================
+
+    const handleLogout = async () => {
+
         try {
-            const rexult = await axios.get(`${serverUrl}/api/auth/logout`,{withCredentials:true})
+
+            await axios.get(
+                `${serverUrl}/api/auth/logout`,
+                {
+                    withCredentials: true
+                }
+            );
+
+            setUserData(null);
+
             navigate("/signin");
-            setUserData(null);
+
         } catch (error) {
-            setUserData(null);
+
             console.log(error);
 
-        }
-    }
-
-
-
-
-useEffect(() => {
-
-    const SpeechRecognition =
-        window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    const recognition = new SpeechRecognition();
-
-    recognition.continuous = true;
-    recognition.interimResults = false;
-    recognition.lang = "en-US";
-
-    let isProcessing = false;
-
-    const assistantName = userData.assistantname.toLowerCase();
-
-    const startListening = () => {
-        try {
-            recognition.start();
-        } catch (e) {
-            console.log("Recognition already started");
+            setUserData(null);
         }
     };
 
-    const stopListening = () => {
+    // =========================
+    // OPEN DESKTOP APP
+    // =========================
+
+    const openDesktopApp = async (app) => {
+
         try {
-            recognition.stop();
-        } catch (e) {}
+
+            const result = await axios.post(
+                `${serverUrl}/api/user/open-app`,
+                { app },
+                { withCredentials: true }
+            );
+
+            const data = result.data;
+
+            if (
+                data.type === "web" &&
+                data.url
+            ) {
+
+                window.open(
+                    data.url,
+                    "_blank"
+                );
+            }
+
+        } catch (error) {
+
+            console.log(error);
+        }
     };
 
-    recognition.onresult = async (e) => {
+    // =========================
+    // START RECOGNITION
+    // =========================
 
-        if (isProcessing) return;
+    const startRecognition = () => {
 
-        const transcript =
-            e.results[e.results.length - 1][0].transcript.trim().toLowerCase();
+        try {
 
-        console.log("heard:", transcript);
+            if (
+                recognitionRef.current &&
+                !isRecognitionRunningRef.current &&
+                !isSpeakingRef.current
+            ) {
 
-        // wake word check
-        if (!transcript.includes(assistantName)) return;
+                console.log(
+                    "Starting Recognition..."
+                );
 
-        isProcessing = true;
+                recognitionRef.current.start();
+            }
 
-        stopListening();
+        } catch (error) {
 
-        // extract command safely
-        const command = transcript.split(assistantName)[1]?.trim();
+            console.log(
+                "Start Error:",
+                error
+            );
 
-        if (!command) {
-            console.log("No command detected");
-            isProcessing = false;
-            startListening();
+            setTimeout(() => {
+
+                startRecognition();
+
+            }, 1000);
+        }
+    };
+
+    // =========================
+    // SPEAK FUNCTION
+    // =========================
+
+    const speak = (text) => {
+
+        if (!text) return;
+
+        // SHOW ASSISTANT MESSAGE
+        setMessages((prev) => [
+
+            ...prev,
+
+            {
+                sender: "assistant",
+                text
+            }
+        ]);
+
+        isSpeakingRef.current = true;
+        setAssistantStatus(
+    "speaking"
+);
+
+        window.speechSynthesis.cancel();
+
+        const utterance =
+            new SpeechSynthesisUtterance(
+                text
+            );
+
+        utterance.lang = "en-US";
+
+        utterance.rate = 1;
+
+        utterance.pitch = 1;
+
+        utterance.onend = () => {
+
+
+            isSpeakingRef.current = false;
+            setAssistantStatus(
+    "listening"
+);
+
+            setTimeout(() => {
+
+                startRecognition();
+
+            }, 200);
+        };
+
+        window.speechSynthesis.speak(
+            utterance
+        );
+    };
+
+    // =========================
+    // HANDLE GEMINI COMMANDS
+    // =========================
+
+    const handleCommand = (data) => {
+
+        if (!data) return;
+
+        const {
+            type,
+            userInput,
+            response
+        } = data;
+
+        if (response) {
+            speak(response);
+        }
+
+        switch (type) {
+
+            case "google_search":
+
+                window.open(
+                    `https://www.google.com/search?q=${encodeURIComponent(userInput)}`,
+                    "_blank"
+                );
+
+                break;
+
+            case "youtube_search":
+
+                window.open(
+                    `https://www.youtube.com/results?search_query=${encodeURIComponent(userInput)}`,
+                    "_blank"
+                );
+
+                break;
+
+            default:
+                break;
+        }
+    };
+
+    // =========================
+    // VOICE RECOGNITION
+    // =========================
+
+    useEffect(() => {
+
+        const SpeechRecognition =
+            window.SpeechRecognition ||
+            window.webkitSpeechRecognition;
+
+        if (!SpeechRecognition) {
+
+            console.log(
+                "Speech Recognition Not Supported"
+            );
+
             return;
         }
 
-        try {
+        const recognition =
+            new SpeechRecognition();
 
-            console.log("processing command:", command);
+        recognitionRef.current =
+            recognition;
 
-            const data = await getGeminiResponse(command);
+        recognition.continuous = false;
 
-            console.log("response:", data);
+        recognition.interimResults = false;
 
-        } catch (err) {
-            console.log("API error:", err);
-        }
+        recognition.lang = "en-US";
 
-        // cooldown BEFORE restarting (important for RPM control)
-        setTimeout(() => {
-            isProcessing = false;
-            startListening();
-        }, 2000);
-    };
+        recognition.maxAlternatives = 1;
 
-    recognition.onerror = (e) => {
-        console.log("Speech error:", e);
-        isProcessing = false;
-        startListening();
-    };
+        // =========================
+        // ON START
+        // =========================
 
-    recognition.onend = () => {
-        if (!isProcessing) {
-            startListening();
-        }
-    };
+        recognition.onstart = () => {
+            setAssistantStatus(
+    "listening"
+);
 
-    startListening();
+            // console.log(
+            //     "Recognition Started"
+            // );
 
-    return () => stopListening();
+            isRecognitionRunningRef.current =
+                true;
+        };
 
-}, []);
+        // =========================
+        // ON RESULT
+        // =========================
 
+        recognition.onresult =
+            async (e) => {
 
-    return (
-        <div className="w-full h-[100vh] bg-gradient-to-t from-[black] to-[#0d0da3] flex flex-col justify-center items-center gap-2 " >
-        <button className="w-30 h-10 bg-blue-400  text-black rounded-full text-[18px] font-bold hover:bg-blue-600 hover:text-white tracking-wide transition-all duration-300 cursor-pointer mt-3 absolute right-[40px] top-[30px] hover:shadow-[0_0_15px_rgba(59,130,246,0.6)] active:scale-95"  onClick={handleLogout}>LogOut</button>
-           
-         <button className="w-53 h-10  bg-blue-400 text-black rounded-full text-[17px] font-bold hover:bg-blue-600 transition-all duration-300 hover:text-white cursor-pointer mt-3 absolute top-[85px] right-[40px] hover:shadow-[0_0_15px_rgba(59,130,246,0.6)] active:scale-95" onClick={()=>navigate("/customize")}>Customize Your Assistant</button>
+                if (
+                    isSpeakingRef.current
+                ) return;
 
-            <div className="w-[300px] h-[300px] flex flex-col justify-center items-center rounded-4xl overflow-hidden mb-2 ">
-                <img src={userData?.assistantimage} alt="Assistant" className="h-full object-cover" />
-            </div>
-            <div className="mb-10">
-             <h1 className="text-white tracking-wider text-[27px]"> I'am {userData?.assistantname}</h1>
-            </div>
-               <button className="w-30 h-10 bg-blue-400  text-black rounded-full text-[18px] font-bold hover:bg-blue-600 hover:text-white tracking-wide  transition-all duration-300 cursor-pointer mt-3 absolute right-[40px] top-[140px] hover:shadow-[0_0_15px_rgba(59,130,246,0.6)] active:scale-95" onClick={()=>navigate("/instruction")} >Instructions  </button>
-        </div>
+                const result =
+                    e.results[
+                        e.results.length - 1
+                    ];
+
+                if (!result.isFinal)
+                    return;
+
+                const transcript =
+                    result[0]
+                        .transcript
+                        .trim()
+                        .toLowerCase();
+
+                // console.log(
+                //     "heard:",
+                //     transcript
+                // );
+                // SHOW EVERY USER MESSAGE
+
+setMessages((prev) => [
+
+    ...prev,
+
+    {
+        sender: "user",
+        text: transcript
+    }
+]);
+
+                const assistantName =
+                    userData?.assistantname?.toLowerCase();
+
+                if (!assistantName)
+                    return;
+
+                if (
+                    !transcript.startsWith(
+                        assistantName
+                    )
+                ) {
+                    return;
+                }
+
+                const command =
+                    transcript
+                        .replace(
+                            assistantName,
+                            ""
+                        )
+                        .trim();
+
+                // console.log(
+                //     "command:",
+                //     command
+                // );
+
+                
+
+                // =========================
+                // OPEN YOUTUBE
+                // =========================
+
+                if (
+                    command ===
+                    "open youtube"
+                ) {
+
+                    speak(
+                        "Opening YouTube"
+                    );
+
+                    window.open(
+                        "https://www.youtube.com",
+                        "_blank"
+                    );
+
+                    return;
+                }
+
+                // =========================
+                // PLAY MUSIC
+                // =========================
+
+                if (
+                    command ===
+                        "play music" ||
+                    command ===
+                        "play song"
+                ) {
+
+                    speak(
+                        "Playing Music"
+                    );
+
+                    window.open(
+                        "https://music.youtube.com",
+                        "_blank"
+                    );
+
+                    return;
+                }
+
+                // =========================
+                // WEATHER
+                // =========================
+
+                if (
+                    command.includes(
+                        "weather"
+                    )
+                ) {
+
+                    let location = "";
+
+                    if (
+                        command.includes(
+                            "weather in"
+                        )
+                    ) {
+
+                        location =
+                            command
+                                .split(
+                                    "weather in"
+                                )[1]
+                                .trim();
+                    }
+
+                    else {
+
+                        location =
+                            command
+                                .replace(
+                                    "weather",
+                                    ""
+                                )
+                                .trim();
+                    }
+
+                    speak(
+                        `Showing weather of ${location}`
+                    );
+
+                    window.open(
+                        `https://www.google.com/search?q=weather+in+${encodeURIComponent(location)}`,
+                        "_blank"
+                    );
+
+                    return;
+                }
+
+                // =========================
+                // GOOGLE SEARCH
+                // =========================
+
+                if (
+                    command.startsWith(
+                        "search "
+                    )
+                ) {
+
+                    const query =
+                        command.replace(
+                            "search",
+                            ""
+                        );
+
+                    speak(
+                        `Searching ${query}`
+                    );
+
+                    window.open(
+                        `https://www.google.com/search?q=${encodeURIComponent(query)}`,
+                        "_blank"
+                    );
+
+                    return;
+                }
+
+                // =========================
+                // YOUTUBE SEARCH
+                // =========================
+
+                if (
+                    command.startsWith(
+                        "youtube search"
+                    )
+                ) {
+
+                    const query =
+                        command.replace(
+                            "youtube search",
+                            ""
+                        );
+
+                    speak(
+                        `Searching ${query} on YouTube`
+                    );
+
+                    window.open(
+                        `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`,
+                        "_blank"
+                    );
+
+                    return;
+                }
+
+                // =========================
+                // MAP SEARCH
+                // =========================
+
+                if (
+                    command.startsWith(
+                        "map "
+                    )
+                ) {
+
+                    const place =
+                        command.replace(
+                            "map",
+                            ""
+                        );
+
+                    speak(
+                        `Opening map for ${place}`
+                    );
+
+                    window.open(
+                        `https://www.google.com/maps/search/${encodeURIComponent(place)}`,
+                        "_blank"
+                    );
+
+                    return;
+                }
+
+                // =========================
+                // OPEN APP
+                // =========================
+
+                if (
+                    command.startsWith(
+                        "open "
+                    )
+                ) {
+
+                    const app =
+                        command
+                            .replace(
+                                "open",
+                                ""
+                            )
+                            .trim();
+
+                    speak(
+                        `Opening ${app}`
+                    );
+
+                    openDesktopApp(app);
+
+                    return;
+                }
+                // =========================
+// CLOSE APP
+// =========================
+
+if (
+    command.startsWith(
+        "close "
+    )
+) {
+
+    const app =
+        command
+            .replace(
+                "close",
+                ""
+            )
+            .trim();
+
+    speak(
+        `Closing ${app}`
     );
+
+    await axios.post(
+        `${serverUrl}/api/user/system`,
+        {
+            action: "close_app",
+            app
+        },
+        {
+            withCredentials: true
+        }
+    );
+
+    return;
 }
+
+
+// =========================
+// MUTE
+// =========================
+
+if (
+command ===
+"mute"
+) {
+
+speak(
+    "Muting system"
+);
+
+await axios.post(
+    `${serverUrl}/api/user/system`,
+    {
+        action:
+            "mute"
+    },
+    {
+        withCredentials: true
+    }
+);
+
+return;
+
+
+}
+
+// =========================
+// UNMUTE
+// =========================
+
+if (
+command ===
+"unmute"
+) {
+
+speak(
+    "Unmuting system"
+);
+
+await axios.post(
+    `${serverUrl}/api/user/system`,
+    {
+        action:
+            "unmute"
+    },
+    {
+        withCredentials: true
+    }
+);
+
+return;
+
+}
+
+// =========================
+// SET VOLUME
+// =========================
+
+if (
+    command.includes(
+        "set volume"
+    )
+) {
+
+    const number =
+        command.match(/\d+/);
+
+    if (number) {
+
+        const volume =
+            parseInt(number[0]);
+
+        speak(
+            `Setting volume to ${volume} percent`
+        );
+
+        await axios.post(
+            `${serverUrl}/api/user/system`,
+            {
+                action:
+                    "set_volume",
+                volume
+            },
+            {
+                withCredentials: true
+            }
+        );
+
+        return;
+    }
+}
+
+
+                // =========================
+                // GEMINI AI
+                // =========================
+
+                try {
+
+                    const data =
+                        await getGeminiResponse(
+                            command
+                        );
+
+                    handleCommand(data);
+
+                } catch (error) {
+
+                    console.log(error);
+
+                    speak(
+                        "Something went wrong"
+                    );
+                }
+            };
+
+        // =========================
+        // ON ERROR
+        // =========================
+
+        recognition.onerror = (
+            event
+        ) => {
+
+            console.log(
+                "Recognition Error:",
+                event.error
+            );
+
+            isRecognitionRunningRef.current =
+                false;
+
+            if (
+                !isSpeakingRef.current
+            ) {
+
+                setTimeout(() => {
+
+                    startRecognition();
+
+                }, 500);
+            }
+        };
+
+        // =========================
+        // ON END
+        // =========================
+
+        recognition.onend = () => {
+
+            // console.log(
+            //     "Recognition Ended"
+            // );
+
+            isRecognitionRunningRef.current =
+                false;
+
+            if (
+                !isSpeakingRef.current &&
+                !isManuallyStoppedRef.current
+            ) {
+
+                setTimeout(() => {
+
+                    startRecognition();
+
+                }, 300);
+            }
+        };
+
+        // =========================
+        // HEALTH CHECKER
+        // =========================
+
+        autoRestartRef.current =
+            setInterval(() => {
+
+                if (
+                    !isRecognitionRunningRef.current &&
+                    !isSpeakingRef.current
+                ) {
+
+                    // console.log(
+                    //     "Health Restart..."
+                    // );
+
+                    startRecognition();
+                }
+
+            }, 5000);
+
+        // INITIAL START
+        startRecognition();
+
+        // CLEANUP
+        return () => {
+
+            isManuallyStoppedRef.current =
+                true;
+
+            try {
+
+                recognition.stop();
+
+            } catch (error) {
+
+                console.log(error);
+            }
+
+            if (
+                autoRestartRef.current
+            ) {
+
+                clearInterval(
+                    autoRestartRef.current
+                );
+            }
+
+            window.speechSynthesis.cancel();
+        };
+
+    }, [userData]);
+
+  return (
+
+<div className="w-full h-[100vh] bg-gradient-to-t from-black to-[#0d0da3] flex flex-col justify-center items-center relative overflow-hidden px-4">
+
+    {/* TOP BUTTONS */}
+
+    <div className="absolute top-6 right-6 flex flex-col gap-4 z-50">
+
+        <button
+            className="w-40 h-11 bg-blue-500/20 backdrop-blur-md border border-blue-400/30 text-white rounded-2xl text-[16px] font-semibold hover:bg-blue-500 hover:scale-105 transition-all duration-300 shadow-lg cursor-pointer"
+            onClick={handleLogout}
+        >
+            Logout
+        </button>
+
+        <button
+            className="w-40 h-11 bg-blue-500/20 backdrop-blur-md border border-blue-400/30 text-white rounded-2xl text-[16px] font-semibold hover:bg-blue-500 hover:scale-105 transition-all duration-300 shadow-lg cursor-pointer"
+            onClick={() => navigate("/customize")}
+        >
+            Customize
+        </button>
+
+        <button
+            className="w-40 h-11 bg-blue-500/20 backdrop-blur-md border border-blue-400/30 text-white rounded-2xl text-[16px] font-semibold hover:bg-blue-500 hover:scale-105 transition-all duration-300 shadow-lg cursor-pointer"
+            onClick={() => navigate("/instruction")}
+        >
+            Instructions
+        </button>
+
+    </div>
+
+    {/* ASSISTANT IMAGE */}
+
+    <div className="relative mb-6">
+
+        <div className="absolute  rounded-full bg-blue-500 blur-3xl opacity-30 animate-pulse"></div>
+
+        <div className="w-[300px] h-[210px] rounded-4xl overflow-hidden border-3 border-blue-300/40 shadow-[0_0_40px_rgba(59,130,246,0.5)] relative">
+
+            <img
+                src={userData?.assistantimage}
+                alt="Assistant"
+                className="w-full h-full object-cover"
+            />
+
+        </div>
+
+    </div>
+
+    {/* ASSISTANT NAME */}
+
+    <h1 className="text-white text-[32px] md:text-[38px] font-bold tracking-wider mb-5 drop-shadow-lg">
+
+        I'am {" "}
+
+        <span className="text-blue-300">
+            {userData?.assistantname}
+        </span>
+
+    </h1>
+
+    {/* CHAT BOX */}
+
+    <div className="w-[60%] max-w-[850px] h-[200px] bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl p-5 overflow-y-auto shadow-2xl">
+
+        {
+            messages.map(
+                (msg, index) => (
+
+                    <div
+                        key={index}
+                        className={`w-full flex mb-2 ${
+                            msg.sender === "user"
+                                ? "justify-end"
+                                : "justify-start"
+                        }`}
+                    >
+
+                        <div
+                            className={`max-w-[70%] px-5 py-4 rounded-3xl shadow-lg transition-all duration-300 ${
+                                msg.sender === "user"
+                                    ? "bg-blue-700 text-white rounded-br-md"
+                                    : "bg-white/10 backdrop-blur-md border border-white/10 text-white rounded-bl-md"
+                            }`}
+                        >
+
+                            <p className="text-xs opacity-70 mb-1 tracking-wide">
+
+                                {
+                                    msg.sender === "user"
+                                        ? "YOU"
+                                        : userData?.assistantname?.toUpperCase()
+                                }
+
+                            </p>
+
+                            <p className="text-[15px] leading-4 ">
+
+                                {msg.text}
+
+                            </p>
+
+                        </div>
+
+                    </div>
+                )
+            )
+        }
+
+        <div ref={chatEndRef}></div>
+
+    </div>
+
+    {/* LISTENING STATUS */}
+
+    <div className="mt-6 flex items-center gap-3 bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/10 shadow-lg">
+
+    <div
+        className={`w-3 h-3 rounded-full animate-pulse ${
+            assistantStatus === "speaking"
+                ? "bg-yellow-400"
+                : "bg-green-400"
+        }`}
+    ></div>
+
+    <p className="text-gray-200 tracking-wide text-[15px] font-medium">
+
+        {
+            assistantStatus === "speaking"
+                ? "Assistant is speaking, please wait..."
+                : "Assistant is listening..."
+        }
+
+    </p>
+
+</div>
+
+
+
+   
+
+  
+
+
+</div>
+
+);
+
+}
+
 export default Home;
