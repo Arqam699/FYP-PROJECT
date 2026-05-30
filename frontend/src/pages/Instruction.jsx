@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { userDataContext } from "../Context/UserContext";
 import { IoArrowBackOutline } from "react-icons/io5";
+import { p } from "framer-motion/client";
 
 function Instruction() {
     const navigate = useNavigate();
@@ -26,17 +27,7 @@ function Instruction() {
                 `${assistantName} open spotify`,
                 `${assistantName} open whatsapp`,
                 `${assistantName} open vscode`,
-                `${assistantName} open telegram`,
-                // Additional apps
-                `${assistantName} open discord`,
-                `${assistantName} open instagram`,
-                `${assistantName} open facebook`,
-                `${assistantName} open linkedin`,
-                `${assistantName} open gmail`,
                 `${assistantName} open netflix`,
-                `${assistantName} open amazon`,
-                `${assistantName} open maps`,
-                `${assistantName} open twitter`,
                 `${assistantName} open notepad`,
                 `${assistantName} open calculator`,
                 `${assistantName} open paint`,
@@ -49,7 +40,6 @@ function Instruction() {
                 `${assistantName} open powerpoint`,
                 `${assistantName} open music`,
                 `${assistantName} open photos`,
-                `${assistantName} open movies`,
 
                 `${assistantName} open taskmanager`,
                 `${assistantName} open controlpanel`,
@@ -59,13 +49,9 @@ function Instruction() {
                 `${assistantName} open desktop`,
                 `${assistantName} open recyclebin`,
     
-                `${assistantName} open androidstudio`,
-        
-    
-                `${assistantName} open zoom`,
-                `${assistantName} open skype`,
             
                 `${assistantName} open terminal`
+            
             ]
         },
         {
@@ -77,31 +63,20 @@ function Instruction() {
                 `${assistantName} close whatsapp`,
                 `${assistantName} close spotify`,
                 `${assistantName} close vscode`,
-                `${assistantName} close telegram`,
-                // Additional apps
-                `${assistantName} close discord`,
-                `${assistantName} close instagram`,
-                `${assistantName} close facebook`,
+             
                 `${assistantName} close linkedin`,
-                `${assistantName} close gmail`,
                 `${assistantName} close netflix`,
-                `${assistantName} close amazon`,
 
-                `${assistantName} close maps`,
-                `${assistantName} close twitter`,
                 `${assistantName} close notepad`,
                 `${assistantName} close calculator`,
                 `${assistantName} close paint`,
            
-                `${assistantName} close explorer`,
                 `${assistantName} close camera`,
            
                 `${assistantName} close vlc`,
                 `${assistantName} close word`,
                 `${assistantName} close excel`,
                 `${assistantName} close powerpoint`,
-
-                `${assistantName} close music`,
                 `${assistantName} close photos`,
                 `${assistantName} close taskmanager`,
                 `${assistantName} close controlpanel`,
@@ -113,9 +88,18 @@ function Instruction() {
                 `${assistantName} close androidstudio`,
                 `${assistantName} close zoom`,
                 `${assistantName} close skype`,
-                `${assistantName} close snippingtool`,
-                `${assistantName} close registryeditor`,
-                `${assistantName} close terminal`
+                `${assistantName} close terminal`,
+            ]
+            
+        },
+        {
+            title: "Close Specific Tab",
+            description: "Use the keyword 'close' together with 'tab' to close a specific browser tab. Example: `${assistantName} close youtube tab` will close the YouTube tab.",
+            items: [
+                `${assistantName} close youtube tab`,
+                `${assistantName} close facebook tab`,
+                `${assistantName} close gmail tab`,
+                `${assistantName} close twitter tab`
             ]
         },
         {
@@ -178,8 +162,6 @@ function Instruction() {
             description:
                 "Control your PC volume using voice commands that start with your assistant name. For example, `${assistantName} set volume 50`,`${assistantName} mute`, `${assistantName} unmute`.",
             items: [
-                `${assistantName} volume up`,
-                `${assistantName} volume down`,
                 `${assistantName} mute`,
                 `${assistantName} unmute`,
                 `${assistantName} set volume 50`,
@@ -208,8 +190,6 @@ function Instruction() {
                 `${assistantName} tum kon ho`,
                 `${assistantName} mujhe javascript samjhao`,
                 `${assistantName} react kya hai`,
-                `${assistantName} weather batao`,
-                `${assistantName} mujhe coding me help chahiye`
             ]
         }
     ];
@@ -232,11 +212,11 @@ function Instruction() {
             </div>
 
             {/* INTRO */}
-            <div className="bg-white/10 border border-white/20 rounded-2xl p-6 mb-10 backdrop-blur-md shadow-xl">
-                <h2 className="text-3xl font-bold mb-5 text-cyan-300">
+            <div className="bg-white/10 border border-white/20 rounded-2xl p-6 mb-8 backdrop-blur-md shadow-xl">
+                <h2 className="text-3xl font-bold mb-3 text-cyan-300">
                     How To Use
                 </h2>
-                <p className="text-gray-200 leading-9 text-lg">
+                <p className="text-gray-200 leading-8 text-lg">
                     Start every command using your assistant name.
                     <br /><br />
                     Example:

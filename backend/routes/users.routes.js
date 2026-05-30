@@ -4,6 +4,7 @@ import {
     currentUser,
     updateAssistant
 } from "../controllers/user.controller.js";
+import activeWin from "active-win";
 
 import isAuth from "../middlewares/isAuth.js";
 import upload from "../middlewares/multer.js";
@@ -383,7 +384,8 @@ userRouter.post(
             const {
                 action,
                 volume,
-                app
+                app, 
+                tabName
             } = req.body;
 
             // FULL PATH
@@ -624,8 +626,53 @@ if (
     });
 }
 
+// =========================
+// CLOSE SPECIFIC TAB
+// =========================
+
+if (
+action ===
+"close_specific_tab"
+) {
 
 
+try {
+
+    exec(
+        `"${nircmdPath}" sendkeypress ctrl+w`,
+        (error) => {
+
+            if (error) {
+
+                console.log(
+                    "Close Tab Error:",
+                    error
+                );
+
+                return res.status(500).json({
+                    success: false
+                });
+            }
+
+            return res.json({
+                success: true
+            });
+        }
+    );
+
+} catch (error) {
+
+    console.log(error);
+
+    return res.status(500).json({
+        success: false
+    });
+}
+
+return;
+
+
+}
 
 
 
@@ -763,10 +810,6 @@ if (
         }
     }
 );
-
-
-
-
 
 
 

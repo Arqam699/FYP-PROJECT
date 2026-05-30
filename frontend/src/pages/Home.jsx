@@ -584,6 +584,57 @@ setMessages((prev) => [
 
                     return;
                 }
+
+
+
+                
+// =========================
+// CLOSE SPECIFIC TAB
+// =========================
+
+if (
+command.includes(
+"close"
+) &&
+command.includes(
+"tab"
+)
+) {
+
+const tabName =
+    command
+        .replace(
+            "close",
+            ""
+        )
+        .replace(
+            "tab",
+            ""
+        )
+        .trim();
+
+speak(
+    `Closing ${tabName} tab`
+);
+
+await axios.post(
+    `${serverUrl}/api/user/system`,
+    {
+        action:
+            "close_specific_tab",
+        tabName
+    },
+    {
+        withCredentials: true
+    }
+);
+
+return;
+
+
+}
+
+
                 // =========================
 // CLOSE APP
 // =========================
@@ -715,6 +766,7 @@ if (
         return;
     }
 }
+
 
 
                 // =========================
