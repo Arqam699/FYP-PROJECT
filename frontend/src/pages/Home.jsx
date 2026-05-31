@@ -1,58 +1,33 @@
-import React, {
-    useEffect,
-    useRef,
-    useState
-} from "react";
-
+import React, {useEffect,useRef,useState} from "react";
 import { userDataContext } from "../Context/UserContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
 function Home() {
 
-    const {
-        userData,
-        serverUrl,
-        setUserData,
-        getGeminiResponse
-    } = React.useContext(userDataContext);
-
+    const {userData,serverUrl,setUserData,getGeminiResponse} = React.useContext(userDataContext);
     const navigate = useNavigate();
 
-    // =========================
     // STATES
-    // =========================
 
-    const [messages, setMessages] =
-        useState([]);
+    const [messages, setMessages] =useState([]);
 
-        const [assistantStatus, setAssistantStatus] =
-    useState("listening");
+     const [assistantStatus, setAssistantStatus] =useState("listening");
 
-    // =========================
     // REFS
-    // =========================
 
     const recognitionRef = useRef(null);
 
-    const isSpeakingRef =
-        useRef(false);
+    const isSpeakingRef =useRef(false);
 
-    const isRecognitionRunningRef =
-        useRef(false);
+    const isRecognitionRunningRef =useRef(false);
 
-    const autoRestartRef =
-        useRef(null);
+    const autoRestartRef =useRef(null);
 
-    const isManuallyStoppedRef =
-        useRef(false);
+    const isManuallyStoppedRef = useRef(false);
 
-    const chatEndRef =
-        useRef(null);
+    const chatEndRef = useRef(null);
 
-    // =========================
     // AUTO SCROLL
-    // =========================
 
     useEffect(() => {
 
@@ -65,16 +40,13 @@ function Home() {
 
     }, [messages]);
 
-    // =========================
     // LOGOUT
-    // =========================
 
     const handleLogout = async () => {
 
         try {
 
-            await axios.get(
-                `${serverUrl}/api/auth/logout`,
+            await axios.get(`${serverUrl}/api/auth/logout`,
                 {
                     withCredentials: true
                 }
@@ -84,7 +56,8 @@ function Home() {
 
             navigate("/signin");
 
-        } catch (error) {
+        } 
+        catch (error) {
 
             console.log(error);
 
@@ -92,17 +65,13 @@ function Home() {
         }
     };
 
-    // =========================
     // OPEN DESKTOP APP
-    // =========================
 
     const openDesktopApp = async (app) => {
 
         try {
 
-            const result = await axios.post(
-                `${serverUrl}/api/user/open-app`,
-                { app },
+            const result = await axios.post(`${serverUrl}/api/user/open-app`,{app},
                 { withCredentials: true }
             );
 
@@ -119,23 +88,21 @@ function Home() {
                 );
             }
 
-        } catch (error) {
+        } 
+        catch (error) {
 
             console.log(error);
         }
     };
 
-    // =========================
     // START RECOGNITION
-    // =========================
 
     const startRecognition = () => {
 
         try {
 
             if (
-                recognitionRef.current &&
-                !isRecognitionRunningRef.current &&
+                recognitionRef.current &&!isRecognitionRunningRef.current &&
                 !isSpeakingRef.current
             ) {
 
@@ -146,7 +113,8 @@ function Home() {
                 recognitionRef.current.start();
             }
 
-        } catch (error) {
+        } 
+        catch (error) {
 
             console.log(
                 "Start Error:",
@@ -161,9 +129,7 @@ function Home() {
         }
     };
 
-    // =========================
     // SPEAK FUNCTION
-    // =========================
 
     const speak = (text) => {
 
@@ -171,9 +137,7 @@ function Home() {
 
         // SHOW ASSISTANT MESSAGE
         setMessages((prev) => [
-
             ...prev,
-
             {
                 sender: "assistant",
                 text
@@ -184,7 +148,6 @@ function Home() {
         setAssistantStatus(
     "speaking"
 );
-
         window.speechSynthesis.cancel();
 
         const utterance =
@@ -218,42 +181,31 @@ function Home() {
         );
     };
 
-    // =========================
     // HANDLE GEMINI COMMANDS
-    // =========================
 
     const handleCommand = (data) => {
 
         if (!data) return;
 
-        const {
-            type,
-            userInput,
-            response
-        } = data;
+        const { type,userInput,response} = data;
 
         if (response) {
             speak(response);
         }
 
         switch (type) {
-
             case "google_search":
-
                 window.open(
                     `https://www.google.com/search?q=${encodeURIComponent(userInput)}`,
                     "_blank"
                 );
-
                 break;
 
             case "youtube_search":
-
                 window.open(
                     `https://www.youtube.com/results?search_query=${encodeURIComponent(userInput)}`,
                     "_blank"
                 );
-
                 break;
 
             default:
@@ -261,9 +213,7 @@ function Home() {
         }
     };
 
-    // =========================
-    // VOICE RECOGNITION
-    // =========================
+     // VOICE RECOGNITION
 
     useEffect(() => {
 
@@ -294,27 +244,19 @@ function Home() {
 
         recognition.maxAlternatives = 1;
 
-        // =========================
         // ON START
-        // =========================
 
         recognition.onstart = () => {
             setAssistantStatus(
     "listening"
 );
 
-            // console.log(
-            //     "Recognition Started"
-            // );
-
             isRecognitionRunningRef.current =
                 true;
         };
 
-        // =========================
-        // ON RESULT
-        // =========================
-
+     // ON RESULT
+    
         recognition.onresult =
             async (e) => {
 
@@ -322,27 +264,15 @@ function Home() {
                     isSpeakingRef.current
                 ) return;
 
-                const result =
-                    e.results[
-                        e.results.length - 1
-                    ];
-
+                const result = e.results[ e.results.length - 1];
                 if (!result.isFinal)
                     return;
 
-                const transcript =
-                    result[0]
-                        .transcript
-                        .trim()
-                        .toLowerCase();
+                const transcript =result[0].transcript.trim().toLowerCase();
 
-                // console.log(
-                //     "heard:",
-                //     transcript
-                // );
                 // SHOW EVERY USER MESSAGE
 
-setMessages((prev) => [
+         setMessages((prev) => [
 
     ...prev,
 
@@ -351,7 +281,6 @@ setMessages((prev) => [
         text: transcript
     }
 ]);
-
                 const assistantName =
                     userData?.assistantname?.toLowerCase();
 
@@ -366,57 +295,33 @@ setMessages((prev) => [
                     return;
                 }
 
-                const command =
-                    transcript
-                        .replace(
-                            assistantName,
-                            ""
-                        )
-                        .trim();
+                const command = transcript.replace(assistantName,"").trim();
 
-                // console.log(
-                //     "command:",
-                //     command
-                // );
-
-                
-
-                // =========================
-                // OPEN YOUTUBE
-                // =========================
-
+             // OPEN YOUTUBE
+            
                 if (
                     command ===
                     "open youtube"
                 ) {
-
                     speak(
                         "Opening YouTube"
                     );
-
                     window.open(
                         "https://www.youtube.com",
                         "_blank"
                     );
-
                     return;
                 }
 
-                // =========================
-                // PLAY MUSIC
-                // =========================
-
+                 // PLAY MUSIC
+                 
                 if (
-                    command ===
-                        "play music" ||
-                    command ===
-                        "play song"
+                    command === "play music" || command === "play song"
                 ) {
 
                     speak(
                         "Playing Music"
                     );
-
                     window.open(
                         "https://music.youtube.com",
                         "_blank"
@@ -425,16 +330,11 @@ setMessages((prev) => [
                     return;
                 }
 
-                // =========================
                 // WEATHER
-                // =========================
-
+                
                 if (
-                    command.includes(
-                        "weather"
-                    )
+                    command.includes("weather")
                 ) {
-
                     let location = "";
 
                     if (
@@ -442,30 +342,14 @@ setMessages((prev) => [
                             "weather in"
                         )
                     ) {
-
-                        location =
-                            command
-                                .split(
-                                    "weather in"
-                                )[1]
-                                .trim();
+                        location = command.split("weather in")[1] .trim();
                     }
-
                     else {
-
-                        location =
-                            command
-                                .replace(
-                                    "weather",
-                                    ""
-                                )
-                                .trim();
+                        location = command.replace("weather","").trim();
                     }
-
                     speak(
                         `Showing weather of ${location}`
                     );
-
                     window.open(
                         `https://www.google.com/search?q=weather+in+${encodeURIComponent(location)}`,
                         "_blank"
@@ -474,22 +358,12 @@ setMessages((prev) => [
                     return;
                 }
 
-                // =========================
                 // GOOGLE SEARCH
-                // =========================
-
+                
                 if (
-                    command.startsWith(
-                        "search "
-                    )
+                    command.startsWith("search ")
                 ) {
-
-                    const query =
-                        command.replace(
-                            "search",
-                            ""
-                        );
-
+                    const query =command.replace("search","");
                     speak(
                         `Searching ${query}`
                     );
@@ -502,25 +376,14 @@ setMessages((prev) => [
                     return;
                 }
 
-                // =========================
                 // YOUTUBE SEARCH
-                // =========================
-
+                
                 if (
-                    command.startsWith(
-                        "youtube search"
-                    )
+                    command.startsWith("youtube search")
                 ) {
 
-                    const query =
-                        command.replace(
-                            "youtube search",
-                            ""
-                        );
-
-                    speak(
-                        `Searching ${query} on YouTube`
-                    );
+                    const query = command.replace("youtube search","");
+                    speak(`Searching ${query} on YouTube` );
 
                     window.open(
                         `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`,
@@ -530,26 +393,16 @@ setMessages((prev) => [
                     return;
                 }
 
-                // =========================
                 // MAP SEARCH
-                // =========================
-
+                
                 if (
-                    command.startsWith(
-                        "map "
-                    )
+                    command.startsWith("map")
                 ) {
 
-                    const place =
-                        command.replace(
-                            "map",
-                            ""
-                        );
-
+                    const place = command.replace("map","");
                     speak(
                         `Opening map for ${place}`
                     );
-
                     window.open(
                         `https://www.google.com/maps/search/${encodeURIComponent(place)}`,
                         "_blank"
@@ -558,67 +411,37 @@ setMessages((prev) => [
                     return;
                 }
 
-                // =========================
-                // OPEN APP
-                // =========================
-
+                 // OPEN APP
+    
                 if (
-                    command.startsWith(
-                        "open "
-                    )
+                    command.startsWith("open")
                 ) {
 
-                    const app =
-                        command
-                            .replace(
-                                "open",
-                                ""
-                            )
-                            .trim();
-
+                    const app = command.replace("open","").trim();
                     speak(
                         `Opening ${app}`
                     );
-
                     openDesktopApp(app);
-
                     return;
-                }
+            }
+                // CLOSE SPECIFIC TAB
 
+                if (
+                command.includes(
+                "close"
+                ) &&
+                command.includes(
+                "tab"
+                    )
+                ) {
 
+                const tabName = command.replace("close","").replace("tab","").trim();
 
-                
-// =========================
-// CLOSE SPECIFIC TAB
-// =========================
+                speak(
+                `Closing ${tabName} tab`
+                     );
 
-if (
-command.includes(
-"close"
-) &&
-command.includes(
-"tab"
-)
-) {
-
-const tabName =
-    command
-        .replace(
-            "close",
-            ""
-        )
-        .replace(
-            "tab",
-            ""
-        )
-        .trim();
-
-speak(
-    `Closing ${tabName} tab`
-);
-
-await axios.post(
-    `${serverUrl}/api/user/system`,
+            await axios.post(`${serverUrl}/api/user/system`,
     {
         action:
             "close_specific_tab",
@@ -627,38 +450,18 @@ await axios.post(
     {
         withCredentials: true
     }
-);
+    );
+         return;
+            }
 
-return;
-
-
-}
-
-
-                // =========================
-// CLOSE APP
-// =========================
-
-if (
-    command.startsWith(
-        "close "
-    )
-) {
-
-    const app =
-        command
-            .replace(
-                "close",
-                ""
-            )
-            .trim();
-
+       // CLOSE APP
+      if (command.startsWith("close")) 
+        {
+    const app =  command.replace("close","").trim();
     speak(
         `Closing ${app}`
     );
-
-    await axios.post(
-        `${serverUrl}/api/user/system`,
+    await axios.post(`${serverUrl}/api/user/system`,
         {
             action: "close_app",
             app
@@ -670,52 +473,34 @@ if (
 
     return;
 }
+         // MUTE
 
+        if (command ==="mute") {
 
-// =========================
-// MUTE
-// =========================
+            speak("Muting system");
 
-if (
-command ===
-"mute"
-) {
-
-speak(
-    "Muting system"
-);
-
-await axios.post(
-    `${serverUrl}/api/user/system`,
+            await axios.post(`${serverUrl}/api/user/system`,
     {
-        action:
-            "mute"
+        action: "mute"
     },
     {
         withCredentials: true
     }
-);
+    );
 
-return;
-
-
+    return;
 }
 
-// =========================
-// UNMUTE
-// =========================
 
-if (
-command ===
-"unmute"
-) {
+    // UNMUTE
 
-speak(
-    "Unmuting system"
-);
+     if (command ==="unmute") {
 
-await axios.post(
-    `${serverUrl}/api/user/system`,
+   speak(
+        "Unmuting system"
+      );
+
+      await axios.post(`${serverUrl}/api/user/system`,
     {
         action:
             "unmute"
@@ -723,37 +508,24 @@ await axios.post(
     {
         withCredentials: true
     }
-);
+   );
 
-return;
+    return;
+    }
 
-}
-
-// =========================
 // SET VOLUME
-// =========================
 
-if (
-    command.includes(
-        "set volume"
-    )
-) {
+      if (command.includes("set volume")
+      ) {
 
-    const number =
-        command.match(/\d+/);
-
+     const number = command.match(/\d+/);
     if (number) {
-
-        const volume =
-            parseInt(number[0]);
-
+        const volume =parseInt(number[0]);
         speak(
             `Setting volume to ${volume} percent`
         );
 
-        await axios.post(
-            `${serverUrl}/api/user/system`,
-            {
+        await axios.post(`${serverUrl}/api/user/system`, {
                 action:
                     "set_volume",
                 volume
@@ -766,48 +538,28 @@ if (
         return;
     }
 }
-
-
-
-                // =========================
                 // GEMINI AI
-                // =========================
 
-                try {
-
-                    const data =
-                        await getGeminiResponse(
-                            command
-                        );
-
+                try { 
+                    const data = await getGeminiResponse(command);
                     handleCommand(data);
-
-                } catch (error) {
-
+                } 
+                catch (error) {
                     console.log(error);
-
                     speak(
                         "Something went wrong"
                     );
                 }
             };
 
-        // =========================
-        // ON ERROR
-        // =========================
+          // ON ERROR
 
         recognition.onerror = (
             event
         ) => {
 
-            console.log(
-                "Recognition Error:",
-                event.error
-            );
-
-            isRecognitionRunningRef.current =
-                false;
-
+            console.log("Recognition Error:",event.error);
+            isRecognitionRunningRef.current =false;
             if (
                 !isSpeakingRef.current
             ) {
@@ -820,19 +572,11 @@ if (
             }
         };
 
-        // =========================
         // ON END
-        // =========================
 
         recognition.onend = () => {
 
-            // console.log(
-            //     "Recognition Ended"
-            // );
-
-            isRecognitionRunningRef.current =
-                false;
-
+            isRecognitionRunningRef.current = false;
             if (
                 !isSpeakingRef.current &&
                 !isManuallyStoppedRef.current
@@ -841,27 +585,18 @@ if (
                 setTimeout(() => {
 
                     startRecognition();
-
                 }, 300);
             }
         };
 
-        // =========================
         // HEALTH CHECKER
-        // =========================
 
         autoRestartRef.current =
             setInterval(() => {
-
                 if (
                     !isRecognitionRunningRef.current &&
                     !isSpeakingRef.current
                 ) {
-
-                    // console.log(
-                    //     "Health Restart..."
-                    // );
-
                     startRecognition();
                 }
 
@@ -873,14 +608,11 @@ if (
         // CLEANUP
         return () => {
 
-            isManuallyStoppedRef.current =
-                true;
-
+            isManuallyStoppedRef.current = true;
             try {
-
                 recognition.stop();
-
-            } catch (error) {
+            }  
+            catch (error) {
 
                 console.log(error);
             }
@@ -888,12 +620,10 @@ if (
             if (
                 autoRestartRef.current
             ) {
-
                 clearInterval(
                     autoRestartRef.current
                 );
             }
-
             window.speechSynthesis.cancel();
         };
 
@@ -903,7 +633,7 @@ if (
 
 <div className="w-full h-[100vh] bg-gradient-to-t from-black to-[#0d0da3] flex flex-col justify-center items-center relative overflow-hidden px-4">
 
-    {/* TOP BUTTONS */}
+     {/* TOP BUTTONS  */}
 
     <div className="absolute top-6 right-6 flex flex-col gap-4 z-50">
 
@@ -918,7 +648,7 @@ if (
             className="w-40 h-11 bg-blue-500/20 backdrop-blur-md border border-blue-400/30 text-white rounded-2xl text-[16px] font-semibold hover:bg-blue-500 hover:scale-105 transition-all duration-300 shadow-lg cursor-pointer"
             onClick={() => navigate("/customize")}
         >
-            Customize
+            Customize Assistant 
         </button>
 
         <button
@@ -927,6 +657,14 @@ if (
         >
             Instructions
         </button>
+
+           <button
+            className="w-40 h-11 bg-blue-500/20 backdrop-blur-md border border-blue-400/30 text-white rounded-2xl text-[16px] font-semibold hover:bg-blue-500 hover:scale-105 transition-all duration-300 shadow-lg cursor-pointer"
+            onClick={() => navigate("/contact")}
+        >
+            Contact Us
+        </button>
+
 
     </div>
 
@@ -939,8 +677,7 @@ if (
         <div className="w-[300px] h-[210px] rounded-4xl overflow-hidden border-3 border-blue-300/40 shadow-[0_0_40px_rgba(59,130,246,0.5)] relative">
 
             <img
-                src={userData?.assistantimage}
-                alt="Assistant"
+                src={userData?.assistantimage} alt="Assistant"
                 className="w-full h-full object-cover"
             />
 
@@ -951,9 +688,7 @@ if (
     {/* ASSISTANT NAME */}
 
     <h1 className="text-white text-[32px] md:text-[38px] font-bold tracking-wider mb-5 drop-shadow-lg">
-
-        I'am {" "}
-
+       I'am {" "}
         <span className="text-blue-300">
             {userData?.assistantname}
         </span>
@@ -962,91 +697,54 @@ if (
 
     {/* CHAT BOX */}
 
-    <div className="w-[60%] max-w-[850px] h-[200px] bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl p-5 overflow-y-auto shadow-2xl">
+ <div className="w-[60%] max-w-[850px] h-[200px] bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl p-5 overflow-y-auto shadow-2xl">
 
         {
             messages.map(
                 (msg, index) => (
 
                     <div
-                        key={index}
-                        className={`w-full flex mb-2 ${
-                            msg.sender === "user"
-                                ? "justify-end"
-                                : "justify-start"
-                        }`}
-                    >
+                     key={index}className={`w-full flex mb-2 ${msg.sender === "user"? "justify-end": "justify-start"}`} >
 
                         <div
-                            className={`max-w-[70%] px-5 py-4 rounded-3xl shadow-lg transition-all duration-300 ${
-                                msg.sender === "user"
-                                    ? "bg-blue-700 text-white rounded-br-md"
-                                    : "bg-white/10 backdrop-blur-md border border-white/10 text-white rounded-bl-md"
-                            }`}
-                        >
+                            className={`max-w-[70%] px-5 py-4 rounded-3xl shadow-lg transition-all duration-300 ${msg.sender === "user"? "bg-blue-700 text-white rounded-br-md": "bg-white/10 backdrop-blur-md border border-white/10 text-white rounded-bl-md"}`} >
 
                             <p className="text-xs opacity-70 mb-1 tracking-wide">
 
-                                {
-                                    msg.sender === "user"
-                                        ? "YOU"
-                                        : userData?.assistantname?.toUpperCase()
-                                }
-
+                     {
+                            msg.sender === "user"? "YOU": userData?.assistantname?.toUpperCase()
+                    }
                             </p>
-
                             <p className="text-[15px] leading-4 ">
-
-                                {msg.text}
-
+                                 {msg.text}
                             </p>
-
                         </div>
-
                     </div>
                 )
             )
         }
-
         <div ref={chatEndRef}></div>
-
     </div>
 
     {/* LISTENING STATUS */}
 
     <div className="mt-6 flex items-center gap-3 bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/10 shadow-lg">
-
     <div
-        className={`w-3 h-3 rounded-full animate-pulse ${
-            assistantStatus === "speaking"
-                ? "bg-yellow-400"
-                : "bg-green-400"
-        }`}
-    ></div>
+        className={`w-3 h-3 rounded-full animate-pulse ${assistantStatus === "speaking"? "bg-yellow-400": "bg-green-400"}`}>
+        </div>
 
     <p className="text-gray-200 tracking-wide text-[15px] font-medium">
 
         {
-            assistantStatus === "speaking"
-                ? "Assistant is speaking, please wait..."
-                : "Assistant is listening..."
+            assistantStatus === "speaking"? "Assistant is speaking, please wait...": "Assistant is listening..."
         }
 
     </p>
 
 </div>
 
-
-
-   
-
-  
-
-
 </div>
-
 );
 
 }
-
 export default Home;

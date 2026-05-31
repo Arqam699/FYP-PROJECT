@@ -3,16 +3,12 @@ import axios from "axios";
 
 export const userDataContext = React.createContext();
 function UserContext({ children }) {
-  const serverUrl = "http://localhost:8000";
+  const serverUrl = import.meta.env.VITE_BACKEND_URL;
   const [userData, setUserData] = React.useState(null);
   const [loading, setLoading] = useState(true);
       const [frontendImage, setFrontendImage] = useState(null);
       const [backendImage, setBackendImage] = useState(null);
       const [selectedImage, setSelectedImage] = useState(null);
-
-
-
-
   const handleCurrentUser = async () => {
 
     try {

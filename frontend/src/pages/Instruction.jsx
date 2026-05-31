@@ -33,14 +33,12 @@ function Instruction() {
                 `${assistantName} open paint`,
                 `${assistantName} open explorer`,
                 `${assistantName} open camera`,
-             
                 `${assistantName} open vlc`,
                 `${assistantName} open word`,
                 `${assistantName} open excel`,
                 `${assistantName} open powerpoint`,
                 `${assistantName} open music`,
                 `${assistantName} open photos`,
-
                 `${assistantName} open taskmanager`,
                 `${assistantName} open controlpanel`,
                 `${assistantName} open settings`,
@@ -48,10 +46,7 @@ function Instruction() {
                 `${assistantName} open documents`,
                 `${assistantName} open desktop`,
                 `${assistantName} open recyclebin`,
-    
-            
                 `${assistantName} open terminal`
-            
             ]
         },
         {
@@ -63,16 +58,12 @@ function Instruction() {
                 `${assistantName} close whatsapp`,
                 `${assistantName} close spotify`,
                 `${assistantName} close vscode`,
-             
                 `${assistantName} close linkedin`,
                 `${assistantName} close netflix`,
-
                 `${assistantName} close notepad`,
                 `${assistantName} close calculator`,
                 `${assistantName} close paint`,
-           
                 `${assistantName} close camera`,
-           
                 `${assistantName} close vlc`,
                 `${assistantName} close word`,
                 `${assistantName} close excel`,
@@ -90,7 +81,6 @@ function Instruction() {
                 `${assistantName} close skype`,
                 `${assistantName} close terminal`,
             ]
-            
         },
         {
             title: "Close Specific Tab",
@@ -204,14 +194,14 @@ function Instruction() {
                 }}
             />
 
-            {/* HEADING */}
+            {/* HEADING  */}
             <div className="w-full flex justify-center items-center mb-12">
                 <h1 className="text-4xl md:text-5xl font-bold tracking-wide text-center">
                     Assistant Instructions
                 </h1>
             </div>
 
-            {/* INTRO */}
+            {/* INTRO  */}
             <div className="bg-white/10 border border-white/20 rounded-2xl p-6 mb-8 backdrop-blur-md shadow-xl">
                 <h2 className="text-3xl font-bold mb-3 text-cyan-300">
                     How To Use
@@ -270,7 +260,7 @@ function Instruction() {
                 </p>
             </div>
 
-            {/* COMMANDS */}
+            {/* COMMANDS  */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {
                     commands.map((section, index) => (

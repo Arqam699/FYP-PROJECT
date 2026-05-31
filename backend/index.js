@@ -8,10 +8,11 @@ import connectdb from './config/db.js';
 dotenv.config();
 import cors from 'cors';
 import userRouter from './routes/users.routes.js';
+import contactRoutes from './routes/users.routes.js';
 import geminiResponse from './gemini.js';
 const app = express();
 app.use(cors({
-  origin:"http://localhost:5173",
+  origin: process.env.frontendUrl,
   credentials:true
 }))
 
@@ -30,6 +31,9 @@ app.get("/",async (req,res)=>{
   let data = await geminiResponse(prompt)
   res.json(data)
 } )
+
+ app.use("/api/contact",contactRoutes);
+
 
   app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
