@@ -513,6 +513,53 @@ function Home() {
     return;
     }
 
+    // SYSTEM POWER CONTROLS
+
+    if (command === "shutdown pc" || command === "shutdown computer") {
+        speak("Shutting down your computer");
+
+        await axios.post(`${serverUrl}/api/user/system`,
+            {
+                action: "shutdown"
+            },
+            {
+                withCredentials: true
+            }
+        );
+
+        return;
+    }
+
+    if (command === "restart pc" || command === "restart computer") {
+        speak("Restarting your computer");
+
+        await axios.post(`${serverUrl}/api/user/system`,
+            {
+                action: "restart"
+            },
+            {
+                withCredentials: true
+            }
+        );
+
+        return;
+    }
+
+    if (command === "lock screen" || command === "lock pc" || command === "lock computer") {
+        speak("Locking your computer");
+
+        await axios.post(`${serverUrl}/api/user/system`,
+            {
+                action: "lock"
+            },
+            {
+                withCredentials: true
+            }
+        );
+
+        return;
+    }
+
 // SET VOLUME
 
       if (command.includes("set volume")
@@ -674,7 +721,7 @@ function Home() {
 
         <div className="absolute  rounded-full bg-blue-500 blur-3xl opacity-30 animate-pulse"></div>
 
-        <div className="w-[300px] h-[210px] rounded-4xl overflow-hidden border-3 border-blue-300/40 shadow-[0_0_40px_rgba(59,130,246,0.5)] relative">
+        <div className="w-[350px] h-[220px] rounded-4xl overflow-hidden border-2 border-blue-200/20 mt-5 shadow-[0_0_40px_rgba(59,130,246,0.5)] relative">
 
             <img
                 src={userData?.assistantimage} alt="Assistant"
@@ -687,7 +734,7 @@ function Home() {
 
     {/* ASSISTANT NAME */}
 
-    <h1 className="text-white text-[32px] md:text-[38px] font-bold tracking-wider mb-5 drop-shadow-lg">
+    <h1 className="text-white text-[32px] md:text-[35px] font-bold tracking-wider mb-3 drop-shadow-lg">
        I'am {" "}
         <span className="text-blue-300">
             {userData?.assistantname}
@@ -697,7 +744,7 @@ function Home() {
 
     {/* CHAT BOX */}
 
- <div className="w-[60%] max-w-[850px] h-[200px] bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl p-5 overflow-y-auto shadow-2xl">
+ <div className="w-[55%] max-w-[850px] h-[200px] bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-5 overflow-y-auto shadow-2xl">
 
         {
             messages.map(
@@ -707,7 +754,7 @@ function Home() {
                      key={index}className={`w-full flex mb-2 ${msg.sender === "user"? "justify-end": "justify-start"}`} >
 
                         <div
-                            className={`max-w-[70%] px-5 py-4 rounded-3xl shadow-lg transition-all duration-300 ${msg.sender === "user"? "bg-blue-700 text-white rounded-br-md": "bg-white/10 backdrop-blur-md border border-white/10 text-white rounded-bl-md"}`} >
+                            className={`max-w-[70%] px-5 py-4 rounded-3xl shadow-lg transition-all duration-300 ${msg.sender === "user"? "bg-black/60 text-white rounded-br-md": "bg-white/10 backdrop-blur-md border border-white/10 text-white rounded-bl-md"}`} >
 
                             <p className="text-xs opacity-70 mb-1 tracking-wide">
 
@@ -728,7 +775,7 @@ function Home() {
 
     {/* LISTENING STATUS */}
 
-    <div className="mt-6 flex items-center gap-3 bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/10 shadow-lg">
+    <div className="my-4 flex items-center gap-3 bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/10 shadow-lg">
     <div
         className={`w-3 h-3 rounded-full animate-pulse ${assistantStatus === "speaking"? "bg-yellow-400": "bg-green-400"}`}>
         </div>

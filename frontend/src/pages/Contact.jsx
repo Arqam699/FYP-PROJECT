@@ -80,6 +80,9 @@ const handleSubmit =
                         email,
                         type,
                         message
+                    },
+                    {
+                        withCredentials: true
                     }
                 );
 

@@ -1,7 +1,20 @@
 import genToken from "../config/token.js"
 import User from "../models/user.model.js"
 import bcrypt from "bcryptjs"
-import axios from "axios"
+
+const cookieOptions = {
+    httpOnly: true,
+    maxAge: 10 * 24 * 60 * 60 * 1000,
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    secure: process.env.NODE_ENV === "production"
+};
+
+const sanitizeUser = (user) => {
+    const userObject = user.toObject();
+    delete userObject.password;
+    return userObject;
+};
+
 export const SignUp = async (req,res)=>{
     try{ 
         const {name,email,password} = req.body
@@ -25,13 +38,8 @@ export const SignUp = async (req,res)=>{
             password: hashPassword
         })
          const token = await genToken(user._id)
-         res.cookie("token",token,{
-            httpOnly:true,
-            maxAge:10*24*60*60*1000,
-            sameSite: false,
-            
-         })
-        return res.status(201).json(user)
+         res.cookie("token",token,cookieOptions)
+        return res.status(201).json(sanitizeUser(user))
     }catch(error){
         console.log(error)
       return res.status(500).json({message:`SignUp error ${error.message}`})
@@ -53,13 +61,9 @@ export const Login = async (req,res)=>{
             return res.status(400).json({message:"Incorrect password"})
         }
          const token = await genToken(user._id)
-         res.cookie("token",token,{
-            httpOnly:true,
-            maxAge:10*24*60*60*1000,
-            sameSite: false,
-                     })
+         res.cookie("token",token,cookieOptions)
 
-        return res.status(200).json(user)
+        return res.status(200).json(sanitizeUser(user))
     }catch(error){
         console.log(error)
        return res.status(500).json({message:`Login error ${error.message}`})
@@ -69,7 +73,7 @@ export const Login = async (req,res)=>{
 
 export const Logout = async (req,res)=>{
     try {
-        res.clearCookie("token")
+        res.clearCookie("token", cookieOptions)
         return res.status(200).json({message:"Logout successful"})  
         
     } catch (error) {

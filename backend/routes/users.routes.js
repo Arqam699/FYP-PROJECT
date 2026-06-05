@@ -1,12 +1,10 @@
 import express from "express";
 import {askToAssistant,currentUser,updateAssistant} from "../controllers/user.controller.js";
-import activeWin from "active-win";
 import isAuth from "../middlewares/isAuth.js";
 import upload from "../middlewares/multer.js";
-import nodemailer from "nodemailer";
 import path from "path";
 
-import {exec,execFile} from "child_process";
+import {exec} from "child_process";
 
 const userRouter = express.Router();
 
@@ -252,7 +250,7 @@ terminal: {
 }
 };
 
-userRouter.post("/open-app",async (req, res) => {
+userRouter.post("/open-app", isAuth, async (req, res) => {
         try {
             let { app } = req.body;
 
@@ -287,7 +285,7 @@ userRouter.post("/open-app",async (req, res) => {
     }
 );
 
-  userRouter.post("/system",async (req, res) => {
+  userRouter.post("/system", isAuth, async (req, res) => {
 
         try {
 
@@ -610,87 +608,6 @@ if (action ==="close_app") {
             });
         }
     }
-);
-
-// conatct router
-
-userRouter.post("/send-contact",async (req, res) => {
-    try {
-
-        const {name,email,type,message } = req.body;
-
-        // GMAIL TRANSPORT
-
-        const transporter =
-            nodemailer.createTransport({
-
-                service: "gmail",
-
-                auth: {
-
-                    user: "arqamiftikhar7@gmail.com",
-
-                    pass: "vivz xsrc kxvx najk "
-                }
-            });
-
-        // EMAIL OPTIONS
-
-        const mailOptions = {
-
-            from: email,
-
-            to: "arqamiftikhar7@gmail.com",
-
-            subject:
-                `New Contact Form Message (${type})`,
-
-            html: `
-
-                <h2>New Contact Message</h2>
-
-                <p>
-                    <strong>Name:</strong>
-                    ${name}
-                </p>
-
-                <p>
-                    <strong>Email:</strong>
-                    ${email}
-                </p>
-
-                <p>
-                    <strong>Type:</strong>
-                    ${type}
-                </p>
-
-                <p>
-                    <strong>Message:</strong>
-                    ${message}
-                </p>
-
-            `
-        };
-
-        await transporter.sendMail(
-            mailOptions
-        );
-
-        return res.json({
-            success: true
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-            success: false
-        });
-    }
-}
-
-
 );
 
 export default userRouter;

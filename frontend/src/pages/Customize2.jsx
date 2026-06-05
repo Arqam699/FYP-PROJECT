@@ -1,16 +1,15 @@
 import React, { useContext, useState } from "react";
 import { userDataContext } from "../Context/UserContext";
-import axios, { Axios } from "axios"
+import axios from "axios"
 import { IoArrowBackOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-import { nav } from "framer-motion/client";
 
 
 function Customize2(){
     const  {userData,backendImage,selectedImage,serverUrl, setUserData } = useContext(userDataContext)
     const [loading,setLoading] = useState(false)
         const navigate = useNavigate()
-    const [assistantName,setAssistantName] = React.useState(userData?.AssistantName || "")
+    const [assistantName,setAssistantName] = React.useState("")
     const handleUpdateAssistant = async ()=>{
          try {
             setLoading(true)
