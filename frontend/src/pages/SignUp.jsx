@@ -7,7 +7,7 @@ import image2 from '../assets/image2.jpg';
 import image3 from '../assets/image3.jpg';
 import image4 from '../assets/image4.jpg';
 import image5 from '../assets/image5.png';
-import { userDataContext } from "../Context/UserContext.jsx";
+import { userDataContext } from "../context/UserContext.jsx";
 import axios from "axios";
 function SignUp() {
   const navigate = useNavigate();

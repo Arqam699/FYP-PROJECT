@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { userDataContext } from "../Context/UserContext";
+import { userDataContext } from "../context/UserContext";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { p } from "framer-motion/client";
 

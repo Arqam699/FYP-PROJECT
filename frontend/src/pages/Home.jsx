@@ -1,5 +1,5 @@
 import React, {useEffect,useRef,useState} from "react";
-import { userDataContext } from "../Context/UserContext";
+import { userDataContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 function Home() {

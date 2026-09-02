@@ -12,7 +12,7 @@ useNavigate
 
 import {
 userDataContext
-} from "../Context/UserContext";
+} from "../context/UserContext";
 
 function Contact() {
 

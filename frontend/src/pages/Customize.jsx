@@ -10,7 +10,7 @@ import image4 from '../assets/image4.jpg';
 import image5 from '../assets/image5.png'; 
 import image6 from '../assets/image6.jpg';
 import imaage7 from '../assets/image7.png';
-import { userDataContext } from "../Context/UserContext";
+import { userDataContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 function Customize(){
 

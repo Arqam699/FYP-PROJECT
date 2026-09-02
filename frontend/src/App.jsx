@@ -5,7 +5,7 @@ import SignIn from "./pages/SignIn";
 import Customize from "./pages/Customize";
 import Customize2 from "./pages/Customize2";
 import Instruction from "./pages/Instruction";
-import UserContext, { userDataContext } from "./Context/UserContext";
+import UserContext, { userDataContext } from "./context/UserContext";
 import Home from "./pages/Home";
 import Contact from "./pages/Contact";
 
