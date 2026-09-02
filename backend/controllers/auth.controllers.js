@@ -4,7 +4,6 @@ import bcrypt from "bcryptjs"
 
 const cookieOptions = {
     httpOnly: true,
-    maxAge: 10 * 24 * 60 * 60 * 1000,
     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     secure: process.env.NODE_ENV === "production"
 };
@@ -71,12 +70,16 @@ export const Login = async (req,res)=>{
 }
 
 
-export const Logout = async (req,res)=>{
+export const Logout = async (req, res) => {
     try {
-        res.clearCookie("token", cookieOptions)
-        return res.status(200).json({message:"Logout successful"})  
-        
+        res.clearCookie("token", cookieOptions);
+
+        return res.status(200).json({
+            message: "Logout successful"
+        });
     } catch (error) {
-         return res.status(500).json({message:`Logout error ${error.message}`})
-    }       
-}
+        return res.status(500).json({
+            message: `Logout error ${error.message}`
+        });
+    }
+};
