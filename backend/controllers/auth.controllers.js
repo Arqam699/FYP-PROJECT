@@ -123,12 +123,13 @@ export const Login = async (req, res) => {
 // =========================
 export const Logout = async (req, res) => {
     try {
-
         res.clearCookie("token", {
             httpOnly: true,
             path: "/",
-            sameSite: isProduction ? "none" : "lax",
-            secure: isProduction
+            sameSite: process.env.NODE_ENV === "production"
+                ? "none"
+                : "lax",
+            secure: process.env.NODE_ENV === "production"
         });
 
         return res.status(200).json({
@@ -139,7 +140,7 @@ export const Logout = async (req, res) => {
         console.log(error);
 
         return res.status(500).json({
-            message: `Logout error ${error.message}`
+            message: `Logout error: ${error.message}`
         });
     }
 };

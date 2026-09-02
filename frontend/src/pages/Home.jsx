@@ -42,28 +42,24 @@ function Home() {
 
     // LOGOUT
 
-    const handleLogout = async () => {
+   const handleLogout = async () => {
+    try {
+        await axios.post(
+            `${serverUrl}/api/auth/logout`,
+            {},
+            {
+                withCredentials: true
+            }
+        );
 
-        try {
+        setUserData(null);
+        navigate("/signin");
 
-            await axios.get(`${serverUrl}/api/auth/logout`,
-                {
-                    withCredentials: true
-                }
-            );
-
-            setUserData(null);
-
-            navigate("/signin");
-
-        } 
-        catch (error) {
-
-            console.log(error);
-
-            setUserData(null);
-        }
-    };
+    } catch (error) {
+        console.log(error);
+        setUserData(null);
+    }
+};
 
     // OPEN DESKTOP APP
 

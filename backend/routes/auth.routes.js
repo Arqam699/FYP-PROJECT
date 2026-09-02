@@ -1,13 +1,17 @@
-// auth.routes.js file name is this
 import express from "express";
 
-import { Login, Logout, SignUp } from "../controllers/auth.controllers.js"
+import {
+    Login,
+    Logout,
+    SignUp
+} from "../controllers/auth.controllers.js";
+
 const authRouter = express.Router();
 
-authRouter.post("/signup",SignUp)
+authRouter.post("/signup", SignUp);
 
-authRouter.post("/login",Login)
+authRouter.post("/login", Login);
 
-authRouter.get("/logout",Logout)
+authRouter.post("/logout", Logout);
 
-export default authRouter
+export default authRouter;
