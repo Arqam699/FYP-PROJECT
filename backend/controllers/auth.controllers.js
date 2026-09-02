@@ -2,12 +2,14 @@ import genToken from "../config/token.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 
-// Cookie settings
+const isProduction = process.env.NODE_ENV === "production";
+
 const cookieOptions = {
     httpOnly: true,
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    secure: process.env.NODE_ENV === "production"
+    path: "/",
+    sameSite: isProduction ? "none" : "lax",
+    secure: isProduction
 };
 
 const sanitizeUser = (user) => {
@@ -54,7 +56,6 @@ export const SignUp = async (req, res) => {
 
         const token = await genToken(user._id);
 
-        // Login for 7 days
         res.cookie("token", token, cookieOptions);
 
         return res.status(201).json(sanitizeUser(user));
@@ -103,7 +104,6 @@ export const Login = async (req, res) => {
 
         const token = await genToken(user._id);
 
-        // Login for 7 days
         res.cookie("token", token, cookieOptions);
 
         return res.status(200).json(sanitizeUser(user));
@@ -124,14 +124,11 @@ export const Login = async (req, res) => {
 export const Logout = async (req, res) => {
     try {
 
-        // Immediately expire/delete token cookie
-        res.cookie("token", "", {
+        res.clearCookie("token", {
             httpOnly: true,
-            expires: new Date(0),
-            sameSite: process.env.NODE_ENV === "production"
-                ? "none"
-                : "lax",
-            secure: process.env.NODE_ENV === "production"
+            path: "/",
+            sameSite: isProduction ? "none" : "lax",
+            secure: isProduction
         });
 
         return res.status(200).json({
